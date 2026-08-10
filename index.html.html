@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ola w Berlinie — niemiecki A1 od zera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Literata:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#141821; --ink2:#1E242F; --ink3:#2B333F;
+  --paper:#F5F3EC; --grid:#DCD5C6; --pen:#20262F;
+  --am:#FFA02E; --go:#FFC24D; --stop:#E4586B;
+  --der:#4EA8FF; --die:#FF7A96; --das:#3FD39B;
+  --chalk:#ECEFF4; --dim:#8D97A8;
+  --disp:'Archivo Black','Arial Black',system-ui,sans-serif;
+  --body:'Literata',Georgia,serif;
+  --mono:'JetBrains Mono',ui-monospace,'Courier New',monospace;
+  --r:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--ink);color:var(--chalk);font-family:var(--body);font-size:17px;line-height:1.55;overflow-x:hidden}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 90px}
+.hide{display:none!important}
+
+.hud{position:sticky;top:0;z-index:60;background:rgba(20,24,33,.94);backdrop-filter:blur(10px);border-bottom:1px solid #2B333F}
+.hud-in{max-width:760px;margin:0 auto;padding:9px 14px 11px;display:flex;align-items:center;gap:12px}
+.lvl{font-family:var(--disp);font-size:13px;letter-spacing:.04em;white-space:nowrap}
+.lvl span{color:var(--am)}
+.xpbar{flex:1;height:9px;background:var(--ink3);border-radius:99px;overflow:hidden;min-width:40px}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,#FF7A2E,var(--am));width:0;border-radius:99px;transition:width .5s cubic-bezier(.2,.9,.2,1)}
+.stat{font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--dim);white-space:nowrap}
+.stat b{color:var(--chalk)}
+
+h1{font-family:var(--disp);font-size:clamp(28px,7.5vw,44px);line-height:1;margin:26px 0 6px;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--am)}
+.sub{color:var(--dim);font-size:15px;margin:0 0 22px;max-width:52ch}
+h2{font-family:var(--disp);font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:30px 0 12px}
+
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--ink2);border:1px solid #333C4A;border-radius:var(--r);padding:14px;text-align:left;transition:transform .12s,border-color .12s}
+.tile:active{transform:scale(.975)}
+.tile:hover{border-color:var(--am)}
+.tile b{display:block;font-family:var(--disp);font-size:15px;margin-bottom:3px}
+.tile small{color:var(--dim);font-size:13px;font-family:var(--body)}
+.tile.wide{grid-column:1/-1}
+
+.tabs{display:flex;gap:5px;background:var(--ink2);padding:5px;border-radius:12px;margin:26px 0 14px}
+.tab-b{flex:1;padding:10px 4px;border-radius:8px;font-family:var(--disp);font-size:11.5px;letter-spacing:.02em;color:var(--dim);transition:background .15s,color .15s}
+.tab-b.on{background:var(--am);color:var(--ink)}
+.tab-b small{display:block;font-family:var(--body);font-size:11px;letter-spacing:0;font-weight:400;opacity:.8;margin-top:1px}
+
+.ch{display:flex;align-items:center;gap:13px;width:100%;text-align:left;padding:12px;border-radius:var(--r);border:1px solid transparent;background:var(--ink2);margin-bottom:8px;transition:border-color .12s,transform .12s}
+.ch:hover{border-color:#465264}
+.ch:active{transform:scale(.99)}
+.ring{position:relative;width:40px;height:40px;flex:0 0 40px}
+.ring svg{transform:rotate(-90deg);display:block}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--disp);font-size:13px}
+.ch-t{flex:1;min-width:0}
+.ch-t b{display:block;font-family:var(--body);font-weight:600;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ch-t small{color:var(--dim);font-family:var(--mono);font-size:11.5px}
+.go{font-family:var(--disp);font-size:11px;letter-spacing:.08em;color:var(--ink);background:var(--am);padding:7px 11px;border-radius:8px}
+
+/* rodzajniki — kolory z materiału Goethe */
+.der{color:var(--der)} .die{color:var(--die)} .das{color:var(--das)}
+.paper .der{color:#1668C7} .paper .die{color:#C43A5C} .paper .das{color:#12855C}
+.gkey{display:flex;gap:8px;margin:10px 0 0;font-family:var(--mono);font-size:12px}
+.gkey span{padding:3px 9px;border-radius:6px;background:var(--ink2);border:1px solid #333C4A}
+
+.paper{background:var(--paper);color:var(--pen);border-radius:var(--r);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:23px 23px;background-position:-1px -1px;padding:18px 16px;box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.line{padding:9px 0;border-bottom:1px dashed rgba(32,38,47,.16)}
+.line:last-child{border:0}
+.en{font-size:19px;line-height:1.5}
+.pl{font-size:14.5px;color:#666F7E;font-style:italic;margin-top:3px}
+.pl.off{display:none}
+.spk{font-family:var(--mono);font-size:11px;font-weight:700;color:#666F7E;border:1px solid rgba(32,38,47,.22);border-radius:6px;padding:2px 6px;margin-right:7px;vertical-align:2px}
+.spk:active{background:var(--am)}
+w{border-bottom:2.5px solid rgba(255,160,46,.5);cursor:pointer;padding-bottom:.5px;transition:background .15s}
+w:hover,w.on{background:var(--am);border-bottom-color:#C87A18}
+w.o{border-bottom:1px dotted rgba(32,38,47,.32)}
+
+.frm{width:100%;border-collapse:collapse}
+.frm td{padding:8px 6px;border-bottom:1px dashed rgba(32,38,47,.18);vertical-align:top;font-size:15.5px}
+.frm td:first-child{width:88px;font-family:var(--disp);font-size:11px;color:#7A8494;letter-spacing:.04em;padding-top:11px}
+.frm tr:last-child td{border:0}
+.frm b{background:var(--am);padding:0 3px;border-radius:3px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chip{background:var(--am);color:var(--pen);font-family:var(--mono);font-size:12.5px;font-weight:700;padding:4px 9px;border-radius:6px}
+.box{background:var(--ink2);border-left:3px solid var(--am);border-radius:0 10px 10px 0;padding:12px 14px;margin-top:12px;font-size:15px}
+.box.stop{border-left-color:var(--stop)}
+.box h4{font-family:var(--disp);font-size:11px;letter-spacing:.12em;color:var(--dim);margin:0 0 6px;text-transform:uppercase}
+.box s{color:var(--stop);text-decoration-thickness:2px}
+.box b{color:var(--am)}
+.box ul{margin:0;padding-left:18px}
+.box li{margin:5px 0}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.vs div{background:var(--ink2);border:1px solid #333C4A;border-radius:10px;padding:11px 12px;font-size:15px}
+.vs div b{color:var(--am)}
+.vs .note{grid-column:1/-1;background:none;border:0;padding:2px;color:var(--dim);font-size:13.5px}
+@media(max-width:520px){.vs{grid-template-columns:1fr}}
+
+.pop{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(140%);
+  width:min(440px,calc(100vw - 24px));z-index:90;max-height:74vh;overflow-y:auto;
+  background:var(--ink2);border:1px solid var(--am);border-radius:var(--r);padding:14px 16px;
+  box-shadow:0 20px 50px rgba(0,0,0,.6);transition:transform .28s cubic-bezier(.2,.9,.2,1)}
+.pop.show{transform:translateX(-50%) translateY(0)}
+.pop .w1{font-family:var(--disp);font-size:26px;line-height:1.1}
+.pop .w2{font-size:18px;margin-top:2px}
+.pop .w3{font-family:var(--mono);font-size:13px;color:var(--am);margin-top:6px}
+.pop .w4{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin-top:4px}
+.pop .row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn{font-family:var(--disp);font-size:12px;letter-spacing:.06em;padding:10px 14px;border-radius:9px;background:var(--ink3);border:1px solid #465264}
+.btn:active{transform:scale(.97)}
+.btn.y{background:var(--am);color:var(--ink);border-color:var(--am)}
+.ac{background:var(--am);color:var(--ink);border-radius:3px;padding:0 3px;font-weight:700}
+.sent{margin-top:12px;border-top:1px solid #333C4A;padding-top:10px}
+.sent p{margin:0 0 9px;font-size:15px;line-height:1.45}
+.sent p span{color:var(--dim);font-size:13px;font-style:italic;display:block}
+.sent mark{background:var(--am);color:var(--ink);border-radius:3px;padding:0 2px}
+
+.qtop{display:flex;align-items:center;gap:10px;margin:18px 0 10px}
+.dots{display:flex;gap:4px;flex:1;flex-wrap:wrap}
+.dot{max-width:26px;height:5px;border-radius:99px;background:var(--ink3);flex:1}
+.dot.ok{background:var(--go)}.dot.no{background:var(--stop)}
+.combo{font-family:var(--disp);font-size:13px;color:var(--am);white-space:nowrap;transition:transform .18s}
+.combo.pump{transform:scale(1.45)}
+.streakbar{height:6px;background:var(--ink3);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.streakbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#FF7A2E,var(--am),#fff);transition:width .3s}
+.card{background:var(--ink2);border:1px solid #333C4A;border-radius:var(--r);padding:20px 16px;text-align:center}
+.qlab{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.qword{font-family:var(--disp);font-size:clamp(28px,8.5vw,46px);line-height:1.05;margin:12px 0 4px;word-break:break-word}
+.qword.small{font-size:clamp(19px,5vw,26px);line-height:1.35;font-family:var(--body);font-weight:600;word-break:normal}
+.qpron{font-family:var(--mono);font-size:13px;color:var(--am)}
+.opts{display:grid;gap:9px;margin-top:18px}
+.opts.g3{grid-template-columns:1fr 1fr 1fr}
+.opts.g3 .opt{text-align:center;font-family:var(--disp);font-size:19px;padding:20px 6px}
+.opt{position:relative;overflow:hidden;text-align:left;padding:14px 15px;border-radius:11px;background:var(--ink3);border:1px solid #465264;font-size:17px;transition:transform .1s}
+.opt:active{transform:scale(.985)}
+.opt i{position:absolute;inset:0;background:var(--am);transform-origin:left;transform:scaleX(0);z-index:0}
+.opt.bad i{background:var(--stop)}
+.opt span{position:relative;z-index:1}
+.opt.hit i{transform:scaleX(1);transition:transform .35s cubic-bezier(.2,.9,.2,1)}
+.opt.hit span{color:#12161F;font-weight:700}
+.opt.dim{opacity:.4}
+.xppop{position:fixed;font-family:var(--disp);font-size:22px;color:var(--am);z-index:95;pointer-events:none;animation:fly 1s ease-out forwards;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+@keyframes fly{0%{opacity:0;transform:translateY(6px) scale(.7)}20%{opacity:1;transform:translateY(-6px) scale(1.15)}100%{opacity:0;transform:translateY(-70px) scale(1)}}
+.hint{color:var(--dim);font-size:14.5px;margin-top:14px;min-height:22px;line-height:1.45}
+.hint b{color:var(--chalk)}
+.big{font-family:var(--disp);font-size:clamp(48px,16vw,86px);line-height:.95;color:var(--am)}
+.tab{width:100%;border-collapse:collapse;margin-top:14px;font-size:15px}
+.tab td{padding:8px 0;border-bottom:1px solid #2B333F;vertical-align:top}
+.tab td:last-child{text-align:right;font-family:var(--mono);font-size:12px;color:var(--dim);white-space:nowrap;padding-left:10px}
+.tab .bad td:first-child{color:var(--stop)}
+.timer{font-family:var(--disp);font-size:15px;color:var(--stop)}
+.foot{color:var(--dim);font-size:13px;margin-top:34px;border-top:1px solid #2B333F;padding-top:14px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="hud"><div class="hud-in">
+  <div class="lvl">POZIOM <span id="hLvl">1</span></div>
+  <div class="xpbar"><i id="hXp"></i></div>
+  <div class="stat">🔥<b id="hStreak">0</b></div>
+  <div class="stat">✓<b id="hWords">0</b></div>
+</div></div>
+
+<div class="wrap">
+
+<section id="vHome">
+  <h1>Ola jedzie<br>do <em>Berlina</em>.</h1>
+  <p class="sub">Niemiecki od zera. Zacznij od zakładki WYMOWA — 15 zasad i będziesz umiał przeczytać prawie każde niemieckie słowo. Potem <b id="totalW">0</b> słówek z listy Goethe A1.</p>
+
+  <div class="tiles">
+    <button class="tile wide" onclick="startGender()"><b>🔵🔴🟢 DER, DIE CZY DAS?</b><small>Najważniejszy trening w niemieckim. Trzy przyciski, zero myślenia, czysta szybkość. <b id="genN">0</b> rzeczowników.</small></button>
+    <button class="tile" onclick="startBlitz()"><b>⚡ BLITZ 60s</b><small>Ile zdążysz? Tylko to, co już widziałeś.</small></button>
+    <button class="tile" onclick="startFix()"><b>🩹 MOJE BŁĘDY</b><small>To, co Ci ucieka. <b id="fixN">0</b> słówek.</small></button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-b" id="tabp" onclick="setLevel('p')">WYMOWA<small id="pp">0%</small></button>
+    <button class="tab-b on" id="tabw" onclick="setLevel('w')">SŁÓWKA<small id="pw">0%</small></button>
+    <button class="tab-b" id="tabg" onclick="setLevel('g')">GRAMATYKA<small id="pg">0%</small></button>
+  </div>
+  <div id="chList"></div>
+
+  <div class="foot">
+    <b>Kolory rodzajników</b> (tak radzi materiał Goethe): <span class="der">der = niebieski</span>, <span class="die">die = czerwony</span>, <span class="das">das = zielony</span>. Rodzajnik jest częścią słowa — w tej aplikacji nie zobaczysz rzeczownika bez niego.
+    <br><br>Dotknij dowolnego słowa w zdaniu, żeby zobaczyć tłumaczenie, wymowę, liczbę mnogą i wszystkie zdania, w których to słowo występuje.
+    <br><br>Zdania niemieckie pochodzą z oficjalnej listy Goethe-Institut — nie wymyślam ich, żeby nie nauczyć Cię przypadkiem błędnej konstrukcji.
+    <br><br><button class="btn" id="sndBtn" onclick="toggleSnd()">🔊 Dźwięki</button>
+  </div>
+</section>
+
+<section id="vRead" class="hide">
+  <div class="qtop">
+    <button class="btn" onclick="go('home')">← Wróć</button>
+    <div style="flex:1"></div>
+    <button class="btn" id="tglPl" onclick="togglePl()">Ukryj polski</button>
+  </div>
+  <h1 id="rTitle" style="font-size:clamp(22px,6vw,32px);margin:6px 0 4px"></h1>
+  <p class="sub" id="rSub" style="margin-bottom:16px"></p>
+  <div class="paper" id="rPaper"></div>
+  <div class="tiles" style="margin-top:14px">
+    <button class="tile" onclick="showChWords()"><b>📓 Lista słówek</b><small>Z rodzajnikiem i liczbą mnogą.</small></button>
+    <button class="tile" onclick="startChapter(CUR)"><b>🎯 TRENUJ →</b><small>10 pytań. Zdobądź XP.</small></button>
+  </div>
+  <div id="rList"></div>
+</section>
+
+<section id="vGram" class="hide">
+  <div class="qtop"><button class="btn" onclick="go('home')">← Wróć</button></div>
+  <h1 id="gTitle" style="font-size:clamp(22px,6vw,32px);margin:6px 0 2px"></h1>
+  <p class="sub" id="gSub" style="margin-bottom:16px"></p>
+  <div class="paper"><table class="frm" id="gForms"></table></div>
+  <div class="chips" id="gSig"></div>
+  <div id="gBody"></div>
+  <div class="tiles" style="margin-top:16px">
+    <button class="tile" onclick="startGram(CURG)"><b>🎯 TRENUJ →</b><small>10 zdań. Wybierasz formę.</small></button>
+    <button class="tile" onclick="startMix()"><b>🌀 MIX</b><small>Wszystkie tematy gramatyczne naraz.</small></button>
+  </div>
+</section>
+
+<section id="vPron" class="hide">
+  <div class="qtop"><button class="btn" onclick="go('home')">← Wróć</button></div>
+  <h1 style="font-size:clamp(22px,6vw,32px);margin:6px 0 2px">Jak to czytać</h1>
+  <p class="sub" style="margin-bottom:16px">Niemiecki czyta się DUŻO regularniej niż angielski. Te 15 zasad wystarczy, żeby przeczytać prawie każde słowo. To Twoja największa przewaga na starcie.</p>
+  <div class="paper"><table class="frm" id="prRules"></table></div>
+  <div id="prBody"></div>
+  <div class="tiles" style="margin-top:16px">
+    <button class="tile wide" onclick="startPron()"><b>🎯 PRZECZYTAJ TO SŁOWO →</b><small>Dostajesz niemieckie słowo i cztery wymowy. Trzy z nich to błędy, które robi Polak.</small></button>
+  </div>
+</section>
+
+<section id="vQuiz" class="hide">
+  <div class="qtop">
+    <button class="btn" onclick="quitQuiz()">✕</button>
+    <div class="dots" id="qDots"></div>
+    <div class="timer hide" id="qTimer"></div>
+    <div class="combo" id="qCombo"></div>
+  </div>
+  <div class="streakbar"><i id="qStreakBar"></i></div>
+  <div class="card">
+    <div class="qlab" id="qLab"></div>
+    <div class="qword" id="qWord"></div>
+    <div class="qpron" id="qPron"></div>
+    <div class="opts" id="qOpts"></div>
+    <div class="hint" id="qHint"></div>
+  </div>
+</section>
+
+<section id="vDone" class="hide">
+  <h2 id="dLab">Rozdział zaliczony</h2>
+  <div class="big" id="dBig"></div>
+  <p class="sub" id="dSub"></p>
+  <table class="tab" id="dTab"></table>
+  <div class="tiles" style="margin-top:20px">
+    <button class="tile" onclick="repeat()"><b>🔁 JESZCZE RAZ</b><small>Ten sam materiał, nowe losowanie.</small></button>
+    <button class="tile" onclick="go('home')"><b>🏠 MENU</b><small>Wybierz następny rozdział.</small></button>
+  </div>
+</section>
+
+</div>
+
+<div class="pop" id="pop">
+  <div class="w1" id="pW1"></div>
+  <div class="w2" id="pW2"></div>
+  <div class="w3" id="pW3"></div>
+  <div class="w4" id="pW4"></div>
+  <div class="row">
+    <button class="btn y" onclick="speak(POPW)">🔊 Posłuchaj</button>
+    <button class="btn" onclick="showSent()">📚 W zdaniach</button>
+    <button class="btn" onclick="closePop()">Zamknij</button>
+  </div>
+  <div class="sent hide" id="pSent"></div>
+</div>
+
+<script>
+const CH=[
+{"n":1,"t":"Cześć, jestem Ola","th":"Ola wysiada z pociągu w Berlinie. Pierwsze słowa, które usłyszy.","w":[["hallo","cześć","HA-lo","",""],["Guten Morgen!","dzień dobry (rano)","GU-ten MOR-gen","",""],["Guten Tag!","dzień dobry","GU-ten tag","",""],["Guten Abend!","dobry wieczór","GU-ten A-bent","",""],["tschüss","cześć (na pożegnanie)","czüs","",""],["auf Wiedersehen","do widzenia","ałf WI-der-ze-en","",""],["Wiederhören","do usłyszenia (przez telefon)","WI-der-hö-ren","das",""],["bitte","proszę","BI-te","",""],["danke","dziękuję","DAN-ke","",""],["Dank","podziękowanie","dank","der",""],["danken","dziękować","DAN-ken","",""]],"s":[["Hallo Inge! Wie geht's?","Cześć Inge! Jak się masz?"],["Guten Morgen! Haben Sie gut geschlafen?","Dzień dobry! Dobrze pan spał?"],["Guten Tag, Herr Sommer!","Dzień dobry, panie Sommer!"],["Guten Abend! Ist der Platz noch frei?","Dobry wieczór! Czy to miejsce jest wolne?"],["Junge Leute sagen meistens „tschüss\".","Młodzi ludzie zwykle mówią „cześć\"."],["Auf Wiedersehen und schönen Tag noch!","Do widzenia i miłego dnia!"],["Wir müssen Schluss machen. Auf Wiederhören!","Musimy kończyć. Do usłyszenia!"],["Eine Tasse Kaffee, bitte!","Filiżankę kawy, proszę!"],["Soll ich Ihnen helfen? – Nein, danke!","Mam panu pomóc? – Nie, dziękuję!"],["Vielen Dank für das Geschenk!","Wielkie dzięki za prezent!"],["Ich danke Ihnen für die Einladung.","Dziękuję panu za zaproszenie."]]},
+{"n":2,"t":"Proszę i dziękuję","th":"Uprzejmość otwiera w Niemczech więcej drzwi, niż myślisz.","w":[["Entschuldigung","przepraszam","ent-SZUL-di- gung","die","-en"],["entschuldigen","przepraszać","ent-SZUL-di-gen","",""],["ja","tak","ja","",""],["nein","nie","najn","",""],["willkommen","witaj","WIL-ko-men","",""],["Glückwunsch","życzenia / gratulacje","GLÜK-wunsz","der","¨-e"],["gratulieren","gratulować","gra-tu-LI-ren","",""],["Guten Appetit!","smacznego","GU-ten a-pe-TIT","",""],["Glück","szczęście","glük","das",""],["Achtung","uwaga","ACH-tung","die",""]],"s":[["Entschuldigung, wo ist der Bahnhof?","Przepraszam, gdzie jest dworzec?"],["Entschuldigen Sie bitte, ich bin zu spät.","Przepraszam, spóźniłem się."],["Sind Sie Herr Watanabe? – Ja.","Czy pan Watanabe? – Tak."],["Fährst du nach München? – Nein, ich habe keine Zeit.","Jedziesz do Monachium? – Nie, nie mam czasu."],["Herzlich willkommen in Berlin!","Serdecznie witamy w Berlinie! Serdeczne życzenia urodzinowe!"],["Herzlichen Glückwunsch zur Hochzeit!","Serdeczne gratulacje z okazji ślubu!"],["Ich gratuliere dir zur neuen Stelle!","Gratuluję ci nowej posady!"],["Das Essen ist fertig. Guten Appetit!","Jedzenie gotowe. Smacznego!"],["Viel Glück bei der Prüfung!","Powodzenia na egzaminie!"],["Achtung! Das dürfen Sie nicht tun.","Uwaga! Tego panu nie wolno robić. Auto. — Uwaga! Nadjeżdża samochód."]]},
+{"n":3,"t":"Liczby do dziesięciu","th":"W urzędzie trzeba podać numer. Zaczynamy od jedynki.","w":[["Hilfe","pomoc","HIL-fe","die",""],["Bitte","prośba","BI-te","die","-n"],["Gruß","pozdrowienie","grus","der","¨-e"],["Anrede","zwrot grzecznościowy","AN-re-de","die","-n"],["eins","jeden","ajns","",""],["zwei","dwa","cwaj","",""],["drei","trzy","draj","",""],["vier","cztery","fir","",""],["fünf","pięć","fünf","",""],["sechs","sześć","zeks","",""],["sieben","siedem","ZI-ben","",""],["acht","osiem","acht","",""],["neun","dziewięć","nojn","",""],["zehn","dziesięć","cejn","",""]],"s":[["Hilfe! Bitte helfen Sie mir!","Pomocy! Proszę mi pomóc!"],["Ich habe noch eine Bitte an Sie.","Mam do pana jeszcze jedną prośbę."],["Viele Grüße an Ihre Frau!","Pozdrowienia dla pańskiej żony!"],["Schreiben Sie auch eine Anrede und einen Gruß.","Napisz też zwrot grzecznościowy i pozdrowienie."],["Ich nehme ein Bier.","Wezmę jedno piwo."],["Ich habe zwei Kinder.","Mam dwoje dzieci."],["Drei Bananen, bitte!","Trzy banany poproszę!"],["Der Kurs dauert vier Wochen.","Kurs trwa cztery tygodnie."],["Der Eintritt kostet fünf Euro.","Wstęp kosztuje pięć euro."],["Ich stehe um sechs Uhr auf.","Wstaję o szóstej."],["Wir treffen uns um sieben.","Spotykamy się o siódmej."],["Ich arbeite acht Stunden am Tag.","Pracuję osiem godzin dziennie."],["Der Laden öffnet um neun Uhr.","Sklep otwiera o dziewiątej."],["Die Jacke kostet nur zehn Euro.","Kurtka kosztuje tylko dziesięć euro."]]},
+{"n":4,"t":"Liczby większe","th":"Uwaga: po niemiecku mówi się jedność PRZED dziesiątką.","w":[["elf","jedenaście","elf","",""],["zwölf","dwanaście","cwölf","",""],["dreizehn","trzynaście","DRAJ-cejn","",""],["vierzehn","czternaście","FIR-cejn","",""],["fünfzehn","piętnaście","FÜNF-cejn","",""],["sechzehn","szesnaście","ZECH-cejn","",""],["siebzehn","siedemnaście","ZIB-cejn","",""],["achtzehn","osiemnaście","ACHT-cejn","",""],["neunzehn","dziewiętnaście","NOJN-cejn","",""],["zwanzig","dwadzieścia","CWAN-cich cich","",""],["dreißig","trzydzieści","DRAJ-sich","",""],["vierzig","czterdzieści","FIR-cich","",""],["fünfzig","pięćdziesiąt","FÜNF-cich","",""],["sechzig","sześćdziesiąt","ZECH-cich","",""]],"s":[["Mein Sohn ist elf Jahre alt.","Mój syn ma jedenaście lat."],["Wir fahren um zwölf Uhr ab.","Odjeżdżamy o dwunastej."],["Der Zug hält an Gleis dreizehn.","Pociąg zatrzymuje się na peronie trzynastym."],["Das Gespräch ist um vierzehn Uhr.","Rozmowa jest o czternastej."],["Sieben Uhr fünfzehn.","Siódma piętnaście."],["Der Laden ist bis sechzehn Uhr geöffnet.","Sklep jest otwarty do szesnastej."],["Dreizehn Uhr siebzehn.","Trzynasta siedemnaście."],["Sind Sie über achtzehn?","Czy ma pan powyżej osiemnastu lat?"],["Sie ist neunzehn Jahre alt.","Ona ma dziewiętnaście lat."],["Ich habe noch zwanzig Euro.","Mam jeszcze dwadzieścia euro. — Claudia ma dwadzieścia jeden lat."],["Heute haben wir dreißig Grad.","Dziś mamy trzydzieści stopni."],["Haben Sie das in Größe vierzig?","Ma pan to w rozmiarze czterdzieści?"],["Von Mainz nach Frankfurt sind es circa fünfzig Kilometer.","Z Moguncji do Frankfurtu jest około pięćdziesięciu kilometrów."],["Eine Stunde hat sechzig Minuten.","Godzina ma sześćdziesiąt minut."]]},
+{"n":5,"t":"Który z kolei","th":"Pierwszy, drugi, trzeci — i połówki.","w":[["siebzig","siedemdziesiąt","ZIB-cich","",""],["achtzig","osiemdziesiąt","ACHT-cich","",""],["neunzig","dziewięćdziesiąt","NOJN-cich","",""],["(ein)hundert","sto","HUN-dert","",""],["(ein)tausend","tysiąc","TAŁ-zent","",""],["Million","milion","mi-LJON","die","-en"],["Milliarde","miliard","mi-LJAR-de","die","-n"],["erste","pierwszy","ERS-te","",""],["zweite","drugi","CWAJ-te","",""],["dritte","trzeci","DRI-te","",""],["vierte","czwarty","FIR-te","",""],["halb","pół","halp","",""],["Viertel","ćwierć / kwadrans","FIR-tel","das","-"]],"s":[["Mein Opa ist siebzig Jahre alt.","Mój dziadek ma siedemdziesiąt lat."],["Mein Großvater ist schon achtzig.","Mój dziadek ma już osiemdziesiąt lat."],["Die Fahrt dauert neunzig Minuten.","Podróż trwa dziewięćdziesiąt minut."],["Das Buch hat hundert Seiten.","Książka ma sto stron."],["Das Auto kostet tausend Euro.","Samochód kosztuje tysiąc euro."],["Die Stadt hat eine Million Einwohner.","Miasto ma milion mieszkańców."],["Das Projekt kostet eine Milliarde Euro.","Projekt kosztuje miliard euro."],["Heute ist der erste März.","Dziś jest pierwszy marca."],["Lies bitte den zweiten Teil.","Przeczytaj proszę drugą część."],["Wir wohnen im dritten Stock.","Mieszkamy na trzecim piętrze."],["Das ist mein viertes Jahr hier.","To mój czwarty rok tutaj."],["Es ist halb drei.","Jest wpół do trzeciej."],["Viertel vor zwei.","Za kwadrans druga."]]},
+{"n":6,"t":"Która godzina","th":"Zegar, sekunda, minuta, tydzień.","w":[["Zeit","czas","cajt","die",""],["zurzeit","obecnie","cur-CAJT","",""],["Uhr","godzina / zegar","ur","die","-en"],["Sekunde","sekunda","ze-KUN-de","die","-n"],["Minute","minuta","mi-NU-te","die","-n"],["Stunde","godzina (trwanie)","SZTUN-de","die","-n"],["Tag","dzień","tag","der","-e"],["Woche","tydzień","WO-che","die","-n"],["Monat","miesiąc","MO-nat","der","-e"],["Jahr","rok","jar","das","-e"],["Wochenende","weekend","WO-chen-en-de","das","-n"],["Morgen","ranek","MOR-gen","der",""],["Vormittag","przedpołudnie","FOR-mi-tag","der","-e"],["Mittag","południe","MI-tag","der","-e"],["Nachmittag","popołudnie","NACH-mi-tag","der","-e"],["Abend","wieczór","A-bent","der","-e"],["Nacht","noc","nacht","die","¨-e"]],"s":[["Ich habe heute keine Zeit.","Nie mam dziś czasu."],["Zurzeit habe ich sehr viel zu tun.","Obecnie mam bardzo dużo do zrobienia."],["Es ist vier Uhr.","Jest czwarta godzina."],["Eine Minute hat sechzig Sekunden.","Minuta ma sześćdziesiąt sekund."],["Der Zug kommt in fünf Minuten.","Pociąg przyjeżdża za pięć minut."],["Ich bin in einer Stunde zurück.","Wrócę za godzinę."],["Heute ist ein schöner Tag.","Dziś jest piękny dzień."],["Sehen wir uns nächste Woche?","Zobaczymy się w przyszłym tygodniu?"],["Nächsten Monat ziehen wir um.","W przyszłym miesiącu się przeprowadzamy."],["Ein gutes neues Jahr!","Szczęśliwego nowego roku!"],["Am Wochenende haben wir Gäste.","W weekend mamy gości."],["Am Morgen trinke ich immer Kaffee.","Rano zawsze piję kawę."],["Am Vormittag bin ich im Büro.","Przed południem jestem w biurze."],["Um Mittag machen wir eine Pause.","W południe robimy przerwę."],["Am Nachmittag gehe ich einkaufen.","Po południu idę na zakupy."],["Was machst du heute Abend?","Co robisz dziś wieczorem?"],["Heute Nacht war das Licht an.","Dziś w nocy paliło się światło."]]},
+{"n":7,"t":"Dni i miesiące","th":"Poniedziałek to Montag. Reszta idzie równie logicznie.","w":[["Montag","poniedziałek","MON-tag","der",""],["Dienstag","wtorek","DINS-tag","der",""],["Mittwoch","środa","MIT-woch","der",""],["Donnerstag","czwartek","DO-ners-tag","der",""],["Freitag","piątek","FRAJ-tag","der",""],["Samstag / Sonnabend","sobota","ZAMS-tag","der",""],["Sonntag","niedziela","ZON-tag","der",""],["Januar","styczeń","JA-nu-ar","der",""],["Februar","luty","FE-bru-ar","der",""],["März","marzec","merc","der",""],["April","kwiecień","a-PRIL","der",""],["Mai","maj","maj","der",""],["Juni","czerwiec","JU-ni","der",""],["Juli","lipiec","JU-li","der",""],["August","sierpień","ał-GUST","der",""],["September","wrzesień","zep-TEM-ber","der",""],["Oktober","październik","ok-TO-ber","der",""]],"s":[["Die Prüfung ist am Montag.","Egzamin jest w poniedziałek."],["Meine Schwester kommt am Dienstag.","Moja siostra przyjeżdża we wtorek."],["Am Mittwoch habe ich einen Termin.","W środę mam wizytę."],["Donnerstag passt mir gut.","Czwartek mi pasuje."],["Wir treffen uns immer freitags.","Spotykamy się zawsze w piątki."],["Am Samstag hat die Bank geschlossen.","W sobotę bank jest zamknięty."],["Am Sonntag frühstücke ich gern im Bett.","W niedzielę lubię jeść śniadanie w łóżku."],["Im Januar ist es sehr kalt.","W styczniu jest bardzo zimno."],["Mein Geburtstag ist im Februar.","Moje urodziny są w lutym."],["Heute ist der erste März.","Dziś jest pierwszy marca."],["Berlin, 12. April 2002.","Berlin, 12 kwietnia 2002."],["Im Mai ist das Wetter schön.","W maju pogoda jest ładna."],["Der Kurs endet im Juni.","Kurs kończy się w czerwcu."],["Wir machen Anfang Juli Urlaub.","Bierzemy urlop na początku lipca."],["Im August fahren wir ans Meer.","W sierpniu jedziemy nad morze."],["Ich nehme im September Urlaub.","Biorę urlop we wrześniu."],["Das Studium beginnt im Oktober.","Studia zaczynają się w październiku."]]},
+{"n":8,"t":"Pory roku i kiedy","th":"Lato, jesień, dziś, jutro, zaraz.","w":[["November","listopad","no-WEM-ber","der",""],["Dezember","grudzień","de-CEM-ber","der",""],["Sommer","lato","ZO-mer","der",""],["Herbst","jesień","herpst","der",""],["Winter","zima","WIN-ter","der",""],["Datum","data","DA-tum","das",""],["heute","dzisiaj","HOJ-te","",""],["morgen","jutro","MOR-gen","",""],["gestern","wczoraj","GES-tern","",""],["jetzt","teraz","ject","",""],["bald","wkrótce","balt","",""],["früher","dawniej","FRÜ-er","",""],["später","później","SZPE-ter","",""],["spät","późno","szpet","",""],["pünktlich","punktualny","PÜNKT-lich","",""],["Moment","moment","mo-MENT","der","-e"],["Pause","przerwa","PAŁ-ze","die","-n"]],"s":[["Im November regnet es viel.","W listopadzie dużo pada."],["Im Dezember ist es früh dunkel.","W grudniu wcześnie robi się ciemno. Wiosną kwitną kwiaty."],["Im Sommer ist das Obst billig.","Latem owoce są tanie."],["Im Herbst ist das Wetter oft schlecht.","Jesienią pogoda często jest zła."],["Der Winter war dieses Jahr sehr kalt.","Zima była w tym roku bardzo zimna."],["Bitte schreiben Sie noch das Datum auf das Formular.","Proszę wpisać jeszcze datę na formularzu."],["Heute regnet es.","Dziś pada."],["Morgen beginnt die Schule um zehn Uhr.","Jutro szkoła zaczyna się o dziesiątej."],["Gestern war ich krank.","Wczoraj byłem chory."],["Jetzt machen wir eine Pause.","Teraz robimy przerwę."],["Ich komme bald.","Zaraz przyjdę."],["Früher waren wir oft im Kino.","Dawniej często chodziliśmy do kina."],["Das können wir später machen.","Możemy to zrobić później."],["Es ist schon spät, ich muss gehen.","Jest już późno, muszę iść."],["Herr Müller ist immer pünktlich.","Pan Müller jest zawsze punktualny."],["Einen Moment, bitte!","Chwileczkę, proszę!"],["Von 12.00 bis 12.30 Uhr haben wir Pause.","Od 12:00 do 12:30 mamy przerwę."]]},
+{"n":9,"t":"Kolory","th":"Ola maluje pokój. Początek, koniec i cała paleta.","w":[["Anfang","początek","AN-fang","der","¨-e"],["Ende","koniec","EN-de","das",""],["Farbe","kolor","FAR-be","die","-n"],["schwarz","czarny","szwarc","",""],["weiß","biały","wajs","",""],["grau","szary","grał","",""],["blau","niebieski","blał","",""],["grün","zielony","grün","",""],["rot","czerwony","rot","",""],["gelb","żółty","gelp","",""],["braun","brązowy","brałn","",""],["Norden","północ","NOR-den","der",""],["Westen","zachód","WES-ten","der",""],["Osten","wschód","OS-ten","der",""],["Meter","metr","ME-ter","der","-"],["Kilometer","kilometr","ki-lo-ME-ter","der","-"]],"s":[["Wir machen Anfang Juli Urlaub.","Bierzemy urlop na początku lipca."],["Er bekommt sein Geld am Ende des Monats.","Dostaje pieniądze na koniec miesiąca."],["Die Farbe gefällt mir gut.","Ten kolor bardzo mi się podoba."],["Mein Lieblingsfilm heißt „Schwarze Augen\".","Mój ulubiony film to „Czarne oczy\"."],["Haben Sie auch Weißbrot?","Ma pan też biały chleb?"],["Der Himmel ist heute grau.","Niebo jest dziś szare."],["Er hat blaue Augen.","On ma niebieskie oczy."],["Die Tomate ist noch grün.","Pomidor jest jeszcze zielony."],["Ich möchte den roten Wein.","Poproszę czerwone wino."],["Die Blumen sind gelb.","Kwiaty są żółte."],["Sie hat braune Haare.","Ona ma brązowe włosy."],["Die Norddeutschen sind meist sehr groß.","Niemcy z północy są zwykle bardzo wysocy. południu jest cieplej."],["Wir wohnen im Westen der Stadt.","Mieszkamy w zachodniej części miasta."],["Der Wind kommt aus Osten.","Wiatr wieje ze wschodu."],["Der Mount Everest ist 8.880 Meter hoch.","Mount Everest ma 8880 metrów wysokości."],["Ich schwimme jeden Tag einen Kilometer.","Pływam codziennie kilometr."]]},
+{"n":10,"t":"Miary i kraje","th":"Kilo, litr, procent, euro — i skąd jesteś.","w":[["Gramm","gram","gram","das",""],["Kilo","kilogram","KI-lo","das","gramm"],["Pfund","pół kilo (funt)","pfunt","das",""],["Liter","litr","LI-ter","der","-"],["Grad","stopień","grat","das",""],["Prozent","procent","pro-CENT","das",""],["Gewicht","waga","ge-WICHT","das",""],["Euro","euro","OJ-ro","der",""],["Cent","cent","cent","der",""],["Deutschland","Niemcy","DOJCZ-lant","",""],["deutsch","niemiecki","dojcz","",""],["Europa","Europa","oj-RO-pa","",""],["Ausland","zagranica","AŁS-lant","das",""],["Ausländer","cudzoziemiec","AŁS-len-der","der","-"],["ausländisch","zagraniczny","AŁS-len-disz","",""]],"s":[["Ein Pfund sind fünfhundert Gramm.","Funt to pięćset gramów."],["Ein Kilo Birnen, bitte!","Kilogram gruszek poproszę!"],["Ein Pfund Äpfel, bitte.","Pół kilo jabłek poproszę."],["Wir brauchen einen Liter Milch.","Potrzebujemy litr mleka."],["Heute haben wir dreißig Grad.","Dziś mamy trzydzieści stopni."],["Das sind nur zehn Prozent.","To tylko dziesięć procent."],["Bei „Gewicht\" schreibst du: 62 Kilo.","Przy „waga\" wpisujesz: 62 kilo."],["Das macht fünf Euro achtzig.","To będzie pięć euro osiemdziesiąt."],["Ein Euro hat hundert Cent.","Jedno euro ma sto centów."],["Ich lerne die Sprache von Deutschland.","Uczę się języka Niemiec."],["Wie heißt das auf Deutsch?","Jak to się nazywa po niemiecku?"],["Wir reisen durch Europa.","Podróżujemy po Europie."],["Fahren Sie ins Ausland?","Jedzie pan za granicę?"],["Sind Sie Ausländerin?","Czy jest pani cudzoziemką?"],["Leider habe ich nur ausländisches Geld.","Niestety mam tylko zagraniczne pieniądze. — Pochodzę ze Szwajcarii. To moja ojczyzna."]]},
+{"n":11,"t":"Dane osobowe","th":"Formularz w urzędzie: imię, nazwisko, adres, kod pocztowy.","w":[["international","międzynarodowy","in-ter-na-cjo-NAL","",""],["Welt","świat","welt","die",""],["Land","kraj","lant","das","¨-er"],["Name","nazwisko / imię","NA-me","der","-n"],["Vorname","imię","FOR-na-me","der","-n"],["Familienname","nazwisko","fa-MI-lien-na-me","der","-n"],["Adresse","adres","a-DRE-se","die","-n"],["Postleitzahl","kod pocztowy","POST-lajt-cal","die","-en"],["Nummer","numer","NU-mer","die","-n"],["Alter","wiek","AL-ter","das",""],["Geburtstag","urodziny","ge-BURTS-tag","der","-e"],["Geburtsort","miejsce urodzenia","ge-BURTS-ort","der",""],["Geburtsjahr","rok urodzenia","ge-BURTS-jar","das",""],["geboren","urodzony","ge-BO-ren","",""],["Familienstand","stan cywilny","fa-MI-lien-sztant","der",""],["ledig","wolny (stanu)","LE-dich","",""],["verheiratet","żonaty / zamężna","fer-HAJ-ra-tet","",""],["weiblich","żeński","WAJP-lich","",""]],"s":[["Unser Deutschkurs ist international.","Nasz kurs niemieckiego jest międzynarodowy."],["Es gibt viele Probleme auf der Welt.","Na świecie jest wiele problemów."],["Italien ist ein schönes Land.","Włochy to piękny kraj."],["Mein Name ist Thomas Schmidt.","Nazywam się Thomas Schmidt."],["Mein Vorname ist Eva.","Mam na imię Eva."],["Schmidt ist der Familienname.","Schmidt to nazwisko."],["Können Sie mir seine Adresse sagen?","Może mi pan podać jego adres?"],["Wie ist Ihre Postleitzahl?","Jaki jest pana kod pocztowy?"],["Können Sie mir Ihre Nummer geben?","Może mi pan podać swój numer?"],["Alter: 26 Jahre.","Wiek: 26 lat."],["Herzlichen Glückwunsch zum Geburtstag!","Wszystkiego najlepszego z okazji urodzin!"],["Bitte schreiben Sie Ihren Geburtsort auf.","Proszę wpisać miejsce urodzenia."],["Das Geburtsjahr Ihres Sohnes, bitte?","Rok urodzenia pana syna?"],["Ich bin in Zagreb geboren.","Urodziłem się w Zagrzebiu."],["Bei „Familienstand\" kreuzt du „ledig\" an.","Przy „stan cywilny\" zaznaczasz „wolny\"."],["Sind Sie verheiratet? – Nein, ledig.","Jest pan żonaty? – Nie, wolny."],["Ich bin verheiratet und habe drei Kinder.","Jestem żonaty i mam troje dzieci. „männlich\". — Zaznacz: „żeńska\" czy „męska\"."],["Bei Geschlecht kreuze ich „weiblich\" an.","Przy płci zaznaczam „żeńska\"."]]},
+{"n":12,"t":"Rodzina","th":"Rodzice, rodzeństwo, dziadkowie.","w":[["Familie","rodzina","fa-MI-lie","die","-n"],["Eltern","rodzice","EL-tern","die","l.mn."],["Vater","ojciec","FA-ter","der","¨-"],["Mutter","matka","MU-ter","die","¨-"],["Sohn","syn","zon","der","¨-e"],["Tochter","córka","TOCH-ter","die","¨-"],["Bruder","brat","BRU-der","der","¨-"],["Schwester","siostra","SZWES-ter","die","-n"],["Geschwister","rodzeństwo","ge-SZWIS-ter","die","l.mn."],["Großeltern","dziadkowie","GROS-el-tern","die","l.mn."],["Großmutter","babcia","GROS-mu-ter","die","¨-"],["Großvater","dziadek","GROS-fa-ter","der","¨-"],["Oma","babcia (potocznie)","O-ma","die","-s"],["Opa","dziadek (potocznie)","O-pa","der","-s"],["Ehefrau","żona","E-e-frał","die","-en"],["Ehemann","mąż","E-e-man","der","¨-er"],["Kind","dziecko","kint","das","-er"],["Baby","niemowlę","BEJ-bi","das","-s"]],"s":[["Meine Familie lebt in Spanien.","Moja rodzina mieszka w Hiszpanii."],["Meine Eltern leben in Spanien.","Moi rodzice mieszkają w Hiszpanii."],["Mein Vater ist Arbeiter.","Mój ojciec jest robotnikiem."],["Frau Berghäuser ist die Mutter von Michaela.","Pani Berghäuser jest matką Michaeli."],["Das ist Hans, mein Sohn.","To Hans, mój syn."],["Das ist meine Tochter Katharina.","To moja córka Katharina."],["Sein Bruder arbeitet auch hier.","Jego brat też tu pracuje."],["Meine Schwester kommt am Dienstag.","Moja siostra przyjeżdża we wtorek."],["Ich habe leider keine Geschwister.","Niestety nie mam rodzeństwa."],["Meine Großeltern leben in Japan.","Moi dziadkowie mieszkają w Japonii."],["Meine Großmutter heißt Eva.","Moja babcia ma na imię Eva."],["Mein Großvater ist schon achtzig.","Mój dziadek ma już osiemdziesiąt lat."],["Meine Oma ist schon tot.","Moja babcia już nie żyje."],["Mein Opa heißt Hans.","Mój dziadek ma na imię Hans."],["Das ist meine (Ehe)frau.","To moja żona."],["Mein Mann arbeitet bei der Polizei.","Mój mąż pracuje w policji."],["Wie viele Kinder haben Sie?","Ile ma pan dzieci?"],["Mein Kind ist noch ein Baby.","Moje dziecko to jeszcze niemowlę."]]},
+{"n":13,"t":"Ludzie","th":"Chłopak, dziewczyna, pan, pani, człowiek.","w":[["Junge","chłopiec","JUN-ge","der","-n"],["Mädchen","dziewczynka","MET-chen","das","-"],["Jugendliche","nastolatek","JU-gent-li-che","der","-n"],["Erwachsene","dorosły","er-WAK-se-ne","der","-n"],["Mann","mężczyzna","man","der","¨-er"],["Frau","kobieta / pani","frał","die","-en"],["Herr","pan","her","der","-en"],["Dame","pani","DA-me","die","-n"],["Mensch","człowiek","mensz","der","-en"],["Leute","ludzie","LOJ-te","die","l.mn."],["Freund","przyjaciel / chłopak","frojnt","der","-e"],["Bekannte","znajomy","be-KAN-te","der","-n"],["bekannt","znany","be-KANT","",""],["Verwandte","krewny","fer-WAN-te","der","-n"],["Kollege","kolega z pracy","ko-LE-ge","der","-n"],["Partner","partner","PART-ner","der","-"]],"s":[["Ich habe einen Jungen und ein Mädchen.","Mam chłopca i dziewczynkę."],["Junge oder Mädchen?","Chłopiec czy dziewczynka?"],["Viele Jugendliche kaufen gern ein.","Wielu nastolatków lubi robić zakupy."],["Dieser Film ist nur für Erwachsene.","Ten film jest tylko dla dorosłych."],["Mein Mann arbeitet bei der Polizei.","Mój mąż pracuje w policji."],["Hier arbeiten mehr Frauen als Männer.","Tu pracuje więcej kobiet niż mężczyzn."],["Guten Tag, Herr Sommer!","Dzień dobry, panie Sommer!"],["Sehr geehrte Damen und Herren!","Szanowni Państwo!"],["Die Menschen sind hier anders als bei uns.","Ludzie są tu inni niż u nas."],["In der Disco sind viele Leute.","W dyskotece jest dużo ludzi."],["Das ist ein Freund von mir.","To mój przyjaciel."],["Ein Bekannter von mir heißt Klaus.","Mój znajomy nazywa się Klaus."],["Picasso ist sehr bekannt.","Picasso jest bardzo znany."],["Peter besucht seine Verwandten in Polen.","Peter odwiedza krewnych w Polsce."],["Wie heißt die neue Kollegin?","Jak nazywa się nowa koleżanka?"],["Sie ist meine Partnerin.","Ona jest moją partnerką. weekend mamy kilkoro gości."]]},
+{"n":14,"t":"Ciało i zdrowie","th":"Ola idzie do lekarza. Krótki rozdział, szybka wygrana.","w":[["Haar","włos(y)","har","das","-e"],["Auge","oko","AŁ-ge","das","-n"],["Arm","ramię / ręka","arm","der","-e"],["Bein","noga","bajn","das","-e"],["Fuß","stopa","fus","der","¨-e"],["Hand","dłoń","hant","die","¨-e"],["Kopf","głowa","kopf","der","¨-e"],["Bauch","brzuch","bałch","der","¨-e"],["Mund","usta","munt","der",""],["weh tun","boleć","we tun","",""],["krank","chory","krank","",""],["Fieber","gorączka","FI-ber","das",""],["Arzt","lekarz","arct","der","¨-e"],["Doktor","doktor","DOK-tor","der",""],["Praxis","gabinet lekarski","PRAK-sis","die",""],["müde","zmęczony","MÜ-de","",""],["gestorben / tot","zmarły / martwy","ge-SZTOR-ben / tot","",""]],"s":[["Sie hat lange Haare.","Ona ma długie włosy."],["Er hat blaue Augen.","On ma niebieskie oczy."],["Mein Arm tut weh.","Boli mnie ręka."],["Mein rechtes Bein tut weh.","Boli mnie prawa noga."],["Der linke Fuß tut mir weh.","Boli mnie lewa stopa."],["Er gibt mir die Hand.","Podaje mi rękę."],["Mein Kopf tut weh!","Boli mnie głowa!"],["Seit gestern tut mir der Bauch weh.","Od wczoraj boli mnie brzuch."],["Öffnen Sie den Mund.","Proszę otworzyć usta."],["Mein Bein tut weh.","Boli mnie noga."],["Ich bin krank und liege im Bett.","Jestem chory i leżę w łóżku."],["Mein Mann hat noch immer Fieber.","Mój mąż wciąż ma gorączkę."],["Morgen habe ich einen Termin bei meiner Ärztin.","Jutro mam wizytę u mojej lekarki."],["Meine Tochter ist krank. Wir gehen zum Doktor.","Moja córka jest chora. Idziemy do lekarza."],["Die Praxis ist ab acht Uhr geöffnet.","Gabinet jest otwarty od ósmej."],["Ich bin müde. Ich gehe schlafen.","Jestem zmęczony. Idę spać."],["Sein Vater ist schon lange tot.","Jego ojciec nie żyje już od dawna."]]},
+{"n":15,"t":"Mieszkanie","th":"Ola szuka mieszkania. Kuchnia, łazienka, pokój.","w":[["Wohnung","mieszkanie","WO-nung","die","-en"],["Haus","dom","hałs","das","¨-er"],["zu Hause","w domu","cu HAŁ-ze","",""],["Apartment","apartament","a-PART-ment","das","-s"],["Zimmer","pokój","CI-mer","das","-"],["Küche","kuchnia","KÜ-che","die","-n"],["Bad","łazienka","bat","das",""],["Dusche","prysznic","DU-sze","die","-n"],["Toilette","toaleta","to-a-LE-te","die","-n"],["Balkon","balkon","bal-KON","der",""],["Garten","ogród","GAR-ten","der","¨-"],["Stock","piętro","sztok","der",""],["Aufzug","winda","AŁF-cug","der","¨-e"],["Treppe","schody","TRE-pe","die","-n"],["Eingang","wejście","AJN-gang","der",""],["Ausgang","wyjście","AŁS-gang","der",""],["Möbel","meble","MÖ-bel","die","l.mn."],["Bett","łóżko","bet","das","-en"]],"s":[["Seit wann haben Sie diese Wohnung?","Od kiedy ma pan to mieszkanie?"],["In welchem Haus wohnst du?","W którym domu mieszkasz?"],["Paul ist nicht zu Hause.","Paula nie ma w domu."],["Wir haben ein Apartment gemietet.","Wynajęliśmy apartament."],["Die Wohnung hat drei Zimmer.","Mieszkanie ma trzy pokoje."],["Der neue Herd kommt in die Küche.","Nowa kuchenka trafi do kuchni."],["Wir haben kein großes Bad.","Nie mamy dużej łazienki."],["Unsere Wohnung hat nur eine Dusche.","Nasze mieszkanie ma tylko prysznic."],["Wo ist die Toilette, bitte?","Gdzie jest toaleta?"],["Die Wohnung hat auch einen kleinen Balkon.","Mieszkanie ma też mały balkon."],["Wir haben leider keinen Garten.","Niestety nie mamy ogrodu."],["Unsere Wohnung liegt im ersten Stock.","Nasze mieszkanie jest na pierwszym piętrze."],["In diesem Haus gibt es keinen Aufzug.","W tym domu nie ma windy."],["Die Toilette? Die Treppe hoch und dann links.","Toaleta? Schodami w górę i w lewo."],["Der Eingang ist um die Ecke.","Wejście jest za rogiem."],["Wo ist der Ausgang?","Gdzie jest wyjście?"],["Sind die Möbel neu?","Czy meble są nowe?"],["Wir brauchen noch ein Kinderbett.","Potrzebujemy jeszcze łóżeczka dziecięcego."]]},
+{"n":16,"t":"Meble i czynsz","th":"Stół, szafa, lodówka — i ile to wszystko kosztuje.","w":[["Tisch","stół","tisz","der","-e"],["Schrank","szafa","szrank","der","¨-e"],["Sofa","sofa","ZO-fa","das","-s"],["Herd","kuchenka","hert","der","-e"],["Kühlschrank","lodówka","KÜL-szrank","der","¨-e"],["Maschine","maszyna / pralka","ma-SZI-ne","die","-n"],["Licht","światło","licht","das",""],["Schlüssel","klucz","SZLÜ-sel","der","-"],["Miete","czynsz","MI-te","die",""],["Vermieter","wynajmujący","fer-MI-ter","der","-"],["Stadt","miasto","sztat","die","¨-e"],["Dorf","wieś","dorf","das","¨-er"],["Ort","miejscowość","ort","der","-e"],["Straße","ulica","SZTRA-se","die","-n"],["Ecke","róg","E-ke","die","-n"],["Platz","miejsce / plac","plac","der","¨-e"],["Raum","pomieszczenie","rałm","der","¨-e"]],"s":[["Die Fotos liegen auf dem Tisch.","Zdjęcia leżą na stole."],["Die Gläser stehen im Schrank.","Szklanki stoją w szafce."],["Das Sofa ist neu.","Sofa jest nowa."],["In der neuen Küche fehlt noch der Herd.","W nowej kuchni brakuje jeszcze kuchenki."],["Haben wir noch Milch? – Ja, im Kühlschrank.","Mamy jeszcze mleko? – Tak, w lodówce."],["Die Waschmaschine ist günstig.","Pralka jest w dobrej cenie."],["Wo macht man hier das Licht an?","Gdzie się tu włącza światło?"],["Ich gebe Ihnen den Zimmerschlüssel.","Daję panu klucz do pokoju."],["Die Miete für diese Wohnung ist 600 Euro.","Czynsz za to mieszkanie to 600 euro."],["Unser Vermieter heißt Huber.","Nasz wynajmujący nazywa się Huber."],["Heidelberg ist eine alte Stadt.","Heidelberg to stare miasto."],["Meine Familie lebt in einem Dorf.","Moja rodzina mieszka na wsi."],["Der Ort liegt am Meer.","Miejscowość leży nad morzem."],["In welcher Straße wohnen Sie?","Na jakiej ulicy pan mieszka?"],["An der nächsten Ecke links.","Na następnym rogu w lewo."],["Tut mir leid, der Platz ist besetzt.","Przykro mi, miejsce jest zajęte."],["Der Unterricht ist in Raum 332.","Zajęcia są w sali 332."]]},
+{"n":17,"t":"Śniadanie","th":"Chleb, masło, jajko, kawa.","w":[["Halle","hala","HA-le","die","-n"],["Essen","jedzenie","E-sen","das",""],["Frühstück","śniadanie","FRÜ-sztük","das",""],["Getränk","napój","ge-TRENK","das","-e"],["Brot","chleb","brot","das","-e"],["Brötchen","bułka","BRÖT-chen","das","-"],["Butter","masło","BU-ter","die",""],["Ei","jajko","aj","das","-er"],["Fleisch","mięso","flajsz","das",""],["Fisch","ryba","fisz","der","-e"],["Hähnchen","kurczak","HEN-chen","das","-"],["Schinken","szynka","SZIN-ken","der","-"],["Reis","ryż","rajs","der",""],["Kartoffel","ziemniak","kar-TO-fel","die","-n"],["Pommes frites","frytki","pom frit","die","l.mn."],["Gemüse","warzywa","ge-MÜ-ze","das",""],["Obst","owoce","opst","das",""],["Apfel","jabłko","AP-fel","der","¨-"],["Birne","gruszka","BIR-ne","die","-n"]],"s":[["Wir treffen uns in Halle B.","Spotykamy się w hali B."],["Das Essen ist heute sehr gut.","Jedzenie jest dziś bardzo dobre."],["Möchtest du ein Ei zum Frühstück?","Chcesz jajko na śniadanie?"],["Mein Lieblingsgetränk ist Tomatensaft.","Mój ulubiony napój to sok pomidorowy."],["Haben Sie auch Weißbrot?","Ma pan też biały chleb?"],["Möchtest du Brötchen zum Frühstück?","Chcesz bułki na śniadanie?"],["Ein Brötchen mit Butter und Käse.","Bułka z masłem i serem."],["Möchtest du ein Ei zum Frühstück?","Chcesz jajko na śniadanie?"],["Fleisch mag ich nicht.","Nie lubię mięsa."],["Ich esse gern Fisch.","Chętnie jem ryby."],["Ein Hähnchen mit Pommes, bitte!","Kurczak z frytkami poproszę!"],["Ich möchte gern ein Schinkenbrot.","Poproszę kanapkę z szynką."],["Ich esse gern Reis.","Chętnie jem ryż."],["Für Pommes frites braucht man Kartoffeln.","Na frytki potrzeba ziemniaków."],["Die Kinder essen Hähnchen mit Pommes frites.","Dzieci jedzą kurczaka z frytkami."],["Gemüse brauchen wir auch noch.","Warzywa też jeszcze potrzebne."],["Im Sommer ist das Obst billig.","Latem owoce są tanie."],["Ein Pfund Äpfel, bitte.","Pół kilo jabłek poproszę."],["Ein Kilo Birnen, bitte!","Kilogram gruszek poproszę!"]]},
+{"n":18,"t":"Zakupy spożywcze","th":"Owoce, warzywa, mleko, mięso.","w":[["Banane","banan","ba-NA-ne","die","-n"],["Tomate","pomidor","to-MA-te","die","-n"],["Salat","sałatka","za-LAT","der",""],["Salz","sól","zalc","das",""],["Öl","olej","öl","das",""],["Kuchen","ciasto","KU-chen","der","-"],["Milch","mleko","milch","die",""],["Wasser","woda","WA-ser","das",""],["Saft","sok","zaft","der","¨-e"],["Kaffee","kawa","KA-fe","der",""],["Tee","herbata","te","der",""],["Bier","piwo","bir","das",""],["Flasche","butelka","FLA-sze","die","-n"],["Glas","szklanka / szkło","glas","das","¨-er"],["Hunger","głód","HUN-ger","der",""],["Durst","pragnienie","durst","der",""],["bitter","gorzki","BI-ter","",""],["Lebensmittel","artykuły spożywcze","LE-bens-mi-tel","die","l.mn."],["Lokal","lokal","lo-KAL","das","-e"]],"s":[["Drei Bananen, bitte!","Trzy banany poproszę!"],["Die Tomate ist noch grün.","Pomidor jest jeszcze zielony."],["Wie schmeckt dir der Salat?","Jak ci smakuje sałatka?"],["Kann ich bitte Salz haben?","Mogę prosić sól?"],["Den Salat machen wir ohne Öl.","Sałatkę robimy bez oleju."],["Ich nehme ein Stück Kuchen.","Wezmę kawałek ciasta."],["Die Milch steht im Kühlschrank.","Mleko stoi w lodówce."],["Ein Glas Wasser, bitte.","Szklankę wody poproszę."],["Möchtest du einen Apfelsaft?","Chcesz sok jabłkowy?"],["Zum Frühstück trinke ich immer Kaffee.","Na śniadanie zawsze piję kawę."],["Ich trinke morgens immer Tee.","Rano zawsze piję herbatę."],["Noch ein Bier, bitte.","Jeszcze jedno piwo poproszę. wino może pan polecić?"],["Eine Flasche Bier, bitte.","Butelkę piwa poproszę."],["Bitte noch ein Glas Wein!","Jeszcze kieliszek wina poproszę!"],["Ich habe Hunger! Wann ist das Essen fertig?","Jestem głodny! Kiedy będzie jedzenie?"],["Ich habe großen Durst.","Bardzo chce mi się pić."],["Der Kaffee schmeckt bitter.","Kawa jest gorzka."],["Lebensmittel bekommen Sie im Supermarkt.","Artykuły spożywcze dostanie pan w supermarkecie."],["In unserer Straße gibt es ein neues Lokal.","Na naszej ulicy jest nowy lokal."]]},
+{"n":19,"t":"W restauracji","th":"Karta, rachunek, kasa, piekarnia.","w":[["Restaurant","restauracja","res-to-RANG","das","-s"],["Café","kawiarnia","ka-FE","das","-s"],["Speisekarte","karta dań","SZPAJ-ze-kar-te","die","-n"],["Rechnung","rachunek","RECH-nung","die","-en"],["Geschäft","sklep","ge-SZEFT","das","-e"],["Laden","sklep","LA-den","der","¨-"],["Bäckerei","piekarnia","be-ke-RAJ","die","-en"],["Kiosk","kiosk","KI-osk","der",""],["Kasse","kasa","KA-se","die","-n"],["Preis","cena","prajs","der","-e"],["Angebot","oferta / promocja","AN-ge-bot","das","-e"],["Geld","pieniądze","gelt","das",""]],"s":[["Wir essen heute in einem Restaurant.","Jemy dziś w restauracji."],["Sollen wir uns im Café treffen?","Może spotkamy się w kawiarni?"],["Bringen Sie mir die Speisekarte, bitte.","Proszę przynieść mi kartę dań."],["Die Rechnung, bitte.","Rachunek poproszę."],["Die Geschäfte schließen um 18.30 Uhr.","Sklepy zamykają o 18:30."],["Im Buchladen können Sie Bücher kaufen.","W księgarni może pan kupić książki."],["Ich geh mal schnell zur Bäckerei.","Skoczę szybko do piekarni."],["Am Kiosk bekommen Sie Getränke und Zeitungen.","W kiosku dostanie pan napoje i gazety."],["Zahlen Sie bitte an der Kasse.","Proszę zapłacić w kasie."],["Die Preise sind hoch.","Ceny są wysokie."],["Heute sind Sportschuhe im Angebot.","Dziś buty sportowe są w promocji."],["Hast du noch Geld?","Masz jeszcze pieniądze?"]]},
+{"n":20,"t":"Ubrania i prezenty","th":"Buty, rozmiar, walizka.","w":[["bar","gotówką","bar","",""],["Karte","karta / bilet / pocztówka","KAR-te","die","-n"],["Konto","konto","KON-to","das",""],["Bank","bank / ławka","bank","die",""],["Kleidung","odzież","KLAJ-dung","die",""],["Jacke","kurtka","JA-ke","die","-n"],["Schuh","but","szu","der","-e"],["Größe","rozmiar","GRÖ-se","die","-n"],["Geschenk","prezent","ge-SZENK","das","-e"],["Tasche","torba / kieszeń","TA-sze","die","-n"],["Koffer","walizka","KO-fer","der","-"]],"s":[["Muss ich bar zahlen oder geht's mit Karte?","Muszę płacić gotówką, czy można kartą?"],["Kann ich auch mit Karte bezahlen?","Mogę zapłacić kartą?"],["Wir überweisen das Geld auf Ihr Konto.","Przelewamy pieniądze na pana konto."],["Die Bank schließt schon um vier Uhr.","Bank zamyka już o czwartej."],["Wo finde ich Kleidung?","Gdzie znajdę odzież?"],["Zieh dir eine Jacke an. Es ist kalt.","Załóż kurtkę. Jest zimno."],["Zieh die Schuhe aus!","Zdejmij buty!"],["Haben Sie das auch in Größe 40?","Ma pan to też w rozmiarze 40?"],["Danke für das schöne Geschenk.","Dziękuję za piękny prezent."],["Ich habe die Schlüssel in der Tasche.","Mam klucze w torbie."],["Ist das Ihr Koffer?","Czy to pana walizka?"]]},
+{"n":21,"t":"Bilet i dworzec","th":"Ola kupuje bilet. Peron, przesiadka, opóźnienie.","w":[["Papier","papier","pa-PIR","das",""],["Zigarette","papieros","ci-ga-RE-te","die","-n"],["Anzeige","ogłoszenie","AN-caj-ge","die","-n"],["Verkäufer","sprzedawca","fer-KOJ-fer","der","-"],["Kunde","klient","KUN-de","der","-n"],["Reise","podróż","RAJ-ze","die","-n"],["Reisebüro","biuro podróży","RAJ-ze-bü-ro","das","-s"],["Reiseführer","przewodnik","RAJ-ze-fü-rer","der","-"],["Fahrkarte","bilet","FAR-kar-te","die","-n"],["Ticket","bilet","TI-ket","das","-s"],["Abfahrt","odjazd","AP-fart","die",""],["Ankunft","przyjazd","AN-kunft","die",""],["Abflug","odlot","AP-flug","der",""],["Flughafen","lotnisko","FLUG-ha-fen","der","¨-"],["Zug","pociąg","cug","der","¨-e"],["Bahn","kolej","ban","die",""],["Bahnhof","dworzec","BAN-hof","der","¨-e"]],"s":[["Hier sind Papier und Bleistift.","Tu jest papier i ołówek."],["Wie teuer sind die Zigaretten?","Ile kosztują papierosy?"],["Ich habe Ihre Anzeige in der Zeitung gelesen.","Przeczytałem pana ogłoszenie w gazecie."],["Meine Mutter ist Verkäuferin.","Moja mama jest sprzedawczynią."],["Einen Moment bitte, ich habe eine Kundin.","Chwileczkę, mam klientkę."],["Wir machen eine Reise nach Österreich.","Jedziemy w podróż do Austrii."],["Mein Mann arbeitet im Reisebüro.","Mój mąż pracuje w biurze podróży."],["Ich kaufe mir einen Reiseführer von Berlin.","Kupię sobie przewodnik po Berlinie."],["Hast du schon eine Fahrkarte?","Masz już bilet?"],["Wie viel kostet das Ticket?","Ile kosztuje bilet?"],["Vor der Abfahrt rufe ich an.","Przed odjazdem zadzwonię."],["Auf diesem Plan steht nur die Ankunft der Züge.","Na tym rozkładzie jest tylko przyjazd pociągów."],["Der Abflug ist um 11.20 Uhr.","Odlot jest o 11:20. an. — Samolot z Berlina przylatuje później."],["Kannst du mich zum Flughafen bringen?","Możesz mnie zawieźć na lotnisko?"],["Ich fahre gern mit dem Zug.","Chętnie jeżdżę pociągiem."],["Wir fahren lieber mit der Bahn.","Wolimy jechać koleją."],["Komme ich hier zum Bahnhof?","Czy tędy dojdę do dworca?"]]},
+{"n":22,"t":"Komunikacja miejska","th":"Autobus, S-Bahn, tramwaj, przystanek.","w":[["Bahnsteig","peron","BAN-sztajg","der","-e"],["Gleis","tor / peron","glajs","das","-e"],["Bus","autobus","bus","der","-se"],["S-Bahn","kolejka miejska","ES-ban","die",""],["Straßenbahn","tramwaj","SZTRA-sen-ban","die","-en"],["Haltestelle","przystanek","HAL-te-szte-le","die","-n"],["Auto","samochód","AŁ-to","das","-s"],["Fahrrad","rower","FAR-rat","das","¨-er"],["Taxi","taksówka","TA-ksi","das","-s"],["Lkw","ciężarówka","EL-ka-we","der","-s"],["Autobahn","autostrada","AŁ-to-ban","die","-en"],["Automat","automat","ał-to-MAT","der","-en"],["Anschluss","przesiadka / połączenie","AN-szlus","der",""],["Durchsage","komunikat","DURCH-za-ge","die","-n"],["Ansage","zapowiedź","AN-za-ge","die","-n"],["Ausweis","dowód","AŁS-wajs","der","-e"],["Pass","paszport","pas","der","¨-e"]],"s":[["Auf welchem Bahnsteig fährt der Zug?","Z którego peronu odjeżdża pociąg?"],["Der ICE nach Berlin hält an Gleis 12.","ICE do Berlina zatrzymuje się na torze 12."],["Wann kommt der nächste Bus?","Kiedy przyjedzie następny autobus?"],["Ich nehme lieber die S-Bahn.","Wolę pojechać kolejką miejską."],["Wo fährt die Straßenbahn ab?","Skąd odjeżdża tramwaj?"],["An der nächsten Haltestelle müssen Sie aussteigen.","Na następnym przystanku musi pan wysiąść."],["Er kommt mit dem Auto.","Przyjedzie samochodem."],["Fährst du mit dem Fahrrad oder mit dem Auto?","Jedziesz rowerem czy samochodem?"],["Er fährt mit dem Taxi.","Jedzie taksówką."],["Dieser Lkw ist sehr groß.","Ta ciężarówka jest bardzo duża."],["Wo geht's hier zur Autobahn?","Którędy do autostrady?"],["Die Fahrkarten gibt es nur am Automaten.","Bilety są tylko w automacie."],["In Mannheim haben Sie Anschluss nach Saarbrücken.","W Mannheim ma pan przesiadkę do Saarbrücken."],["Ich habe die Durchsage nicht verstanden.","Nie zrozumiałem komunikatu."],["Hören Sie die Ansagen.","Proszę wysłuchać zapowiedzi. — Chce pan zabrać swój bagaż?"],["Hier ist mein Ausweis.","Oto mój dowód."],["Im Hotel brauchst du deinen Pass.","W hotelu potrzebujesz paszportu."]]},
+{"n":23,"t":"Hotel i wycieczka","th":"Recepcja, pokój dwuosobowy, urlop.","w":[["Papiere","dokumenty","pa-PI-re","die","l.mn."],["Zoll","cło / odprawa celna","col","der",""],["Hotel","hotel","ho-TEL","das","-s"],["Rezeption","recepcja","re-cep-CJON","die",""],["Doppelzimmer","pokój dwuosobowy","DO-pel-ci-mer","das","-"],["Einzelzimmer","pokój jednoosobowy","AJN-cel-ci-mer","das","-"],["Halbpension","z półpensjonatem","HALP-pen-zjon","die",""],["Urlaub","urlop","UR-lałp","der",""],["Ausflug","wycieczka","AŁS-flug","der","¨-e"],["Führung","oprowadzanie","FÜ-rung","die","-en"],["Sehenswürdigkeit","zabytek / atrakcja","ZE-ens-wür-dich-kajt","die","-en"],["Plan","plan / mapa","plan","der","¨-e"],["Prospekt","prospekt / folder","pro-SPEKT","der","-e"],["Eintritt","wstęp","AJN-trit","der",""],["Meer","morze","mer","das",""],["See","jezioro","ze","der",""],["Schalter","okienko / kasa","SZAL-ter","der",""]],"s":[["Haben Sie Ihre Papiere dabei?","Ma pan przy sobie dokumenty?"],["Wir müssen noch durch den Zoll.","Musimy jeszcze przejść odprawę celną."],["Im Urlaub sind wir in einem Hotel am Meer.","Na urlopie jesteśmy w hotelu nad morzem."],["Fragen Sie bitte an der Rezeption.","Proszę zapytać w recepcji."],["Wollen Sie ein Doppelzimmer?","Chce pan pokój dwuosobowy?"],["Haben Sie noch ein Einzelzimmer?","Ma pan jeszcze pokój jednoosobowy?"],["Möchten Sie Vollpension oder Halbpension?","Chce pan pełne wyżywienie czy półpensjonat?"],["Ich nehme im September Urlaub.","Biorę urlop we wrześniu."],["Morgen machen wir einen Ausflug nach Heidelberg.","Jutro robimy wycieczkę do Heidelbergu."],["Die Führung durch das Haus beginnt in drei Minuten.","Oprowadzanie po domu zaczyna się za trzy minuty."],["Welche Sehenswürdigkeiten gibt es in Frankfurt?","Jakie atrakcje są we Frankfurcie?"],["Ich kaufe mir einen Stadtplan.","Kupię sobie plan miasta."],["Bitte schicken Sie mir einen Prospekt.","Proszę przysłać mi folder."],["Der Preis für den Eintritt ist fünf Euro.","Cena wstępu to pięć euro."],["Wir machen Urlaub am Meer.","Spędzamy urlop nad morzem."],["Komm, wir fahren zum Starnberger See.","Chodź, jedziemy nad jezioro Starnberger."],["Gehen Sie bitte zum Schalter drei!","Proszę podejść do okienka numer trzy!"]]},
+{"n":24,"t":"Praca i kierunki","th":"W lewo, w prawo, prosto — i szukanie pracy.","w":[["links","w lewo","links","",""],["rechts","w prawo","rechts","",""],["geradeaus","prosto","ge-RA-de-ałs","",""],["zurück","z powrotem","cu-RÜK","",""],["Arbeit","praca","AR-bajt","die","-en"],["Arbeitsplatz","miejsce pracy","AR-bajts-plac","der","¨-e"],["arbeitslos","bezrobotny","AR-bajts-los","",""],["Beruf","zawód","be-RUF","der","-e"],["Job","praca (dorywcza)","dżob","der","-s"],["Firma","firma","FIR-ma","die",""],["Chef","szef","szef","der",""],["Stelle","posada","SZTE-le","die","-n"],["Praktikum","praktyka / staż","PRAK-ti-kum","das",""],["Termin","termin / umówione spotkanie","ter-MIN","der","-e"],["Feierabend","koniec pracy","FAJ-er-a-bent","der",""],["Feiertag","święto","FAJ-er-tag","der","-e"],["selbstständig","samodzielny / na swoim","ZELPST-szten-dich","",""],["Beamte","urzędnik","be-AM-te","der","-n"]],"s":[["Gehen Sie die nächste Straße links.","Proszę skręcić w następną ulicę w lewo."],["Die Schillerstraße ist hier rechts.","Ulica Schillera jest tu po prawej."],["Gehen Sie immer geradeaus!","Proszę iść cały czas prosto!"],["Einmal Frankfurt und zurück.","Jeden bilet do Frankfurtu i z powrotem."],["Mein Bruder sucht Arbeit.","Mój brat szuka pracy."],["An meinem Arbeitsplatz fehlt ein Drucker.","W moim miejscu pracy brakuje drukarki."],["Es gibt viele Leute, die arbeitslos sind.","Jest wielu ludzi, którzy są bezrobotni."],["Was sind Sie von Beruf?","Kim pan jest z zawodu?"],["Jenny hat einen neuen Job bei der Post.","Jenny ma nową pracę na poczcie."],["Er arbeitet jetzt bei einer anderen Firma.","Pracuje teraz w innej firmie."],["Wir haben eine neue Chefin.","Mamy nową szefową."],["Ich habe eine neue Stelle.","Mam nową posadę."],["Ich mache ein Praktikum bei Siemens.","Odbywam praktykę w Siemensie."],["Am besten machen wir sofort einen Termin.","Najlepiej umówmy się od razu na termin."],["Um fünf Uhr habe ich Feierabend.","O piątej kończę pracę."],["Am Montag ist Feiertag.","W poniedziałek jest święto."],["Er ist selbstständig.","On pracuje na swoim."],["Fragen Sie die Beamtin an Schalter acht!","Proszę zapytać urzędniczkę w okienku ósmym!"]]},
+{"n":25,"t":"Szkoła i kurs","th":"Ola zapisuje się na kurs niemieckiego.","w":[["Polizei","policja","po-li-CAJ","die",""],["Lehrer","nauczyciel","LE-rer","der","-"],["Hausfrau","gospodyni domowa","HAŁS-frał","die","-en"],["Student","student","sztu-DENT","der","-en"],["Verein","stowarzyszenie / klub","fer-AJN","der","-e"],["Schule","szkoła","SZU-le","die","-n"],["Schüler","uczeń","SZÜ-ler","der","-"],["Kindergarten","przedszkole","KIN-der-gar-ten","der","¨-"],["Unterricht","zajęcia / lekcje","UN-ter-richt","der",""],["Kurs","kurs","kurs","der","-e"],["Klasse","klasa","KLA-se","die","-n) (-n"],["Prüfung","egzamin","PRÜ-fung","die","-en"],["Test","test","test","der",""],["Ergebnis","wynik","er-GEP-nis","das","-se"],["Aufgabe","zadanie","AŁF-ga-be","die","-n"],["Lösung","rozwiązanie","LÖ-zung","die","-en"],["Frage","pytanie","FRA-ge","die","-n"],["Antwort","odpowiedź","ANT-wort","die","-en"],["Aussage","wypowiedź / stwierdzenie","AŁS-za-ge","die","-n"]],"s":[["Holen Sie die Polizei!","Proszę wezwać policję!"],["Unsere Deutschlehrerin heißt Frau Müller.","Nasza nauczycielka niemieckiego to pani Müller."],["Die Hausfrau wäscht, kocht und kauft ein.","Gospodyni pierze, gotuje i robi zakupy."],["Ich bin Studentin.","Jestem studentką."],["Es gibt einen neuen Sportverein in der Stadt.","W mieście jest nowy klub sportowy."],["Meine Tochter geht schon in die Schule.","Moja córka już chodzi do szkoły."],["In meinem Kurs sind acht Schülerinnen.","W moim kursie jest osiem uczennic."],["Die kleine Laura geht schon in den Kindergarten.","Mała Laura chodzi już do przedszkola."],["Wir haben Unterricht von 8 bis 12 Uhr.","Mamy zajęcia od 8 do 12."],["Der Deutschkurs geht bis zum Sommer.","Kurs niemieckiego trwa do lata."],["In unserer Klasse sind 25 Schüler.","W naszej klasie jest 25 uczniów. helfen? — Możesz mi pomóc z pracą domową?"],["Die Prüfung ist am Montag um 8 Uhr.","Egzamin jest w poniedziałek o ósmej."],["Der Test war einfach.","Test był łatwy."],["Das Ergebnis bekommen Sie in zwei Wochen.","Wynik dostanie pan za dwa tygodnie."],["Das ist eine schwere Aufgabe.","To trudne zadanie."],["Die Lösung ist ganz einfach.","Rozwiązanie jest bardzo proste."],["Ich habe eine Frage.","Mam pytanie."],["Er gibt leider keine Antwort.","Niestety nie udziela odpowiedzi."],["Ist die Aussage richtig oder falsch?","Czy to stwierdzenie jest prawdziwe czy fałszywe?"]]},
+{"n":26,"t":"Słowa o słowach","th":"Zdanie, litera, język, słownik.","w":[["Beispiel","przykład","BAJ-szpil","das","-e"],["Satz","zdanie","zac","der","¨-e"],["Wort","słowo","wort","das","¨-er"],["Buchstabe","litera","BUCH-szta-be","der","-n"],["Sprache","język","SZPRA-che","die","-n"],["Buch","książka","buch","das","¨-er"],["Wörterbuch","słownik","WÖR-ter-buch","das","¨-er"],["Text","tekst","tekst","der","-e"],["Thema","temat","TE-ma","das",""],["Teil","część","tajl","der","-e"],["Bleistift","ołówek","BLAJ-sztift","der","-e"],["Kugelschreiber","długopis","KU-gel-szraj-ber","der","-"],["Formular","formularz","for-mu-LAR","das","-e"],["Bogen","arkusz","BO-gen","der",""],["Anmeldung","zapisy / rejestracja","AN-mel-dung","die",""],["Unterschrift","podpis","UN-ter-szrift","die","-en"],["Studium","studia","SZTU-dium","das",""],["Information","informacja","in-for-ma-CJON","die","-en"]],"s":[["Kannst du mir ein Beispiel sagen?","Możesz podać mi przykład?"],["Dieser Satz ist sehr einfach.","To zdanie jest bardzo proste."],["Ich kenne das Wort nicht.","Nie znam tego słowa."],["Diesen Buchstaben gibt es in meiner Sprache nicht.","Tej litery nie ma w moim języku."],["Welche Sprachen sprichst du?","Jakimi językami mówisz?"],["Gute Bücher sind oft sehr teuer.","Dobre książki są często bardzo drogie."],["In diesem Wörterbuch finden Sie 20.000 Wörter.","W tym słowniku znajdzie pan 20 000 słów."],["Lesen Sie bitte diesen Text.","Proszę przeczytać ten tekst."],["Wir sprechen über das Thema „Essen\".","Rozmawiamy na temat „jedzenie\"."],["Lies bitte auch den zweiten Teil.","Przeczytaj proszę też drugą część."],["Hast du einen Bleistift?","Masz ołówek?"],["Hast du einen Kugelschreiber für mich?","Masz dla mnie długopis?"],["Sie müssen dieses Formular ausfüllen.","Musi pan wypełnić ten formularz."],["Schreiben Sie Ihre Lösungen auf den Antwortbogen.","Proszę wpisać rozwiązania na arkusz odpowiedzi."],["Eine Anmeldung für diesen Kurs ist nicht mehr möglich.","Zapisy na ten kurs są już zamknięte."],["Hier fehlt noch Ihre Unterschrift.","Tu brakuje jeszcze pana podpisu."],["Das Studium beginnt im Oktober.","Studia zaczynają się w październiku."],["Wir haben wichtige Informationen für Sie.","Mamy dla pana ważne informacje."]]},
+{"n":27,"t":"Poczta i telefon","th":"List, znaczek, komórka, wiadomość.","w":[["Post","poczta","post","die",""],["Brief","list","brif","der","-e"],["Briefmarke","znaczek","BRIF-mar-ke","die","-n"],["Absender","nadawca","AP-zen-der","der","-"],["Empfänger","odbiorca","emp-FEN-ger","der","-"],["Telefon","telefon","TE-le-fon","das","-e"],["Handy","komórka","HEN-di","das","-s"],["Anruf","telefon (połączenie)","AN-ruf","der","-e"],["Anrufbeantworter","automatyczna sekretarka","AN-ruf-be-ant-wor-ter","der","-"],["Vorwahl","numer kierunkowy","FOR-wal","die",""],["besetzt","zajęty","be-ZECT","",""],["Fax","faks","faks","das","-e"],["Internet","internet","IN-ter-net","das",""],["Computer","komputer","kom-PJU-ter","der","-"],["Drucker","drukarka","DRU-ker","der","-"],["CD","płyta CD","ce-DE","die","-s"],["automatisch","automatyczny","ał-to-MA-tisz","",""]],"s":[["Wo ist die Post, bitte?","Gdzie jest poczta?"],["Haben Sie einen Brief für mich?","Ma pan dla mnie list?"],["Kaufst du bitte Briefmarken bei der Post?","Kupisz proszę znaczki na poczcie?"],["Da ist ein Brief ohne Absender.","Jest tu list bez nadawcy."],["Auf dem Brief steht dein Name, du bist der Empfänger.","Na liście jest twoje nazwisko, jesteś odbiorcą."],["Haben Sie Telefon?","Ma pan telefon?"],["In der Schule bitte die Handys ausmachen!","W szkole proszę wyłączyć komórki!"],["Sie bekommt viele Anrufe auf ihrem Handy.","Dostaje dużo telefonów na komórkę."],["Sprechen Sie bitte auf den Anrufbeantworter.","Proszę nagrać się na sekretarkę."],["Wie ist die Vorwahl von München?","Jaki jest numer kierunkowy Monachium?"],["Die Nummer ist immer besetzt.","Numer jest ciągle zajęty."],["Schicken Sie uns einfach ein Fax!","Proszę po prostu wysłać nam faks! bekommen. — Nie dostałem pana e- maila."],["Das findest du im Internet.","Znajdziesz to w internecie."],["Wann bekommst du deinen neuen Computer?","Kiedy dostaniesz nowy komputer?"],["Mein Drucker ist kaputt.","Moja drukarka jest zepsuta."],["Bring bitte deine Lieblings-CD mit.","Przynieś proszę swoją ulubioną płytę."],["Du musst nichts machen. Das geht automatisch.","Nie musisz nic robić. To dzieje się automatycznie."]]},
+{"n":28,"t":"Czas wolny","th":"Hobby, sport, kino, impreza.","w":[["Freizeit","czas wolny","FRAJ-cajt","die",""],["Hobby","hobby","HO-bi","das","-s"],["Sport","sport","szport","der",""],["Fußball","piłka nożna","FUS-bal","der",""],["Spiel","gra / mecz","szpil","das","-e"],["Schwimmbad","basen","SZWIM-bat","das","¨-er"],["Disco","dyskoteka","DIS-ko","die",""],["Party","impreza","PAR-ti","die",""],["Kino","kino","KI-no","das","-s"],["Film","film","film","der","-e"],["Lied","piosenka","lit","das","-er"],["Zeitung","gazeta","CAJ-tung","die","-en"]],"s":[["In meiner Freizeit spiele ich oft Fußball.","W wolnym czasie często gram w piłkę."],["Meine Hobbys sind Wandern und Schwimmen.","Moje hobby to wędrówki i pływanie."],["Ich mache viel Sport.","Dużo uprawiam sportu."],["Spielt ihr gerne Fußball?","Lubicie grać w piłkę nożną?"],["Wer gewinnt das Spiel?","Kto wygra mecz?"],["Kommst du mit ins Schwimmbad?","Idziesz z nami na basen?"],["Heute Abend gehen wir in die Disco tanzen.","Dziś wieczorem idziemy tańczyć do dyskoteki."],["Heute Abend machen wir eine Party.","Dziś wieczorem robimy imprezę."],["Wir sehen heute Abend im Kino einen Film.","Dziś wieczorem obejrzymy film w kinie."],["Ich möchte gern diesen Film sehen.","Chciałbym obejrzeć ten film."],["Welches ist dein Lieblingslied?","Która jest twoja ulubiona piosenka?"],["Ich lese gern Zeitung.","Chętnie czytam gazetę."]]},
+{"n":29,"t":"Przyroda i zwierzęta","th":"Wiatr, drzewo, kwiat, pies.","w":[["Foto","zdjęcie","FO-to","das","-s"],["Bild","obrazek / zdjęcie","bilt","das","-er"],["kulturell","kulturalny","kul-tu-REL","",""],["Wetter","pogoda","WE-ter","das",""],["Sonne","słońce","ZO-ne","die",""],["Regen","deszcz","RE-gen","der",""],["Wind","wiatr","wint","der",""],["Baum","drzewo","bałm","der","¨-e"],["Blume","kwiat","BLU-me","die","-n"],["Hund","pies","hunt","der","-e"],["Feuer","ogień","FOJ-er","das",""]],"s":[["Darf ich ein Foto machen?","Mogę zrobić zdjęcie?"],["Hast du ein Bild von deinem Sohn?","Masz zdjęcie swojego syna? wesele przyjdzie ponad pięćdziesięciu gości."],["Ich bin kulturell interessiert.","Interesuję się kulturą."],["Wir hatten schlechtes Wetter.","Mieliśmy złą pogodę."],["Die Sonne scheint.","Świeci słońce."],["Bei diesem Regen gehe ich nicht raus.","Przy takim deszczu nie wychodzę."],["Der Wind kommt aus Osten.","Wiatr wieje ze wschodu."],["Vorsicht, fahr nicht an den Baum!","Uwaga, nie wjedź w drzewo!"],["Gefallen dir die Blumen?","Podobają ci się kwiaty?"],["Der Hund ist noch jung.","Pies jest jeszcze młody."],["Haben Sie Feuer?","Ma pan ogień?"]]},
+{"n":30,"t":"Czasowniki: być i ruch","th":"sein, haben, gehen, kommen — bez nich nie ma zdania.","w":[["sein","być","zajn","","istgewesen"],["haben","mieć","HA-ben","","hatgehabt"],["werden","stawać się / zostać","WER-den","","istgeworden"],["gehen","iść","GE-en","","istgegangen"],["kommen","przychodzić","KO-men","","istgekommen"],["fahren","jechać","FA-ren","","istgefahren"],["fliegen","lecieć","FLI-gen","","istgeflogen"],["laufen","biec / iść pieszo","LAŁ-fen","","istgelaufen"],["bleiben","zostawać","BLAJ-ben","","istgeblieben"],["stehen","stać","SZTE-en","","hatgestanden"],["sitzen","siedzieć","ZI-cen","","hatgesessen"],["liegen","leżeć","LI-gen","","hatgelegen"],["schlafen","spać","SZLA-fen","","hatgeschlafen"],["essen","jeść","E-sen","","hatgegessen"],["trinken","pić","TRIN-ken","","hatgetrunken"],["sprechen","mówić","SZPRE-chen","","hatgesprochen"],["sagen","mówić / powiedzieć","ZA-gen","",""]],"s":[["Ich bin dreiundzwanzig.","Mam dwadzieścia trzy lata."],["Ich habe ein neues Auto.","Mam nowy samochód."],["Mein Sohn will Arzt werden.","Mój syn chce zostać lekarzem."],["Ich muss zum Arzt gehen.","Muszę iść do lekarza."],["Woher kommen Sie? – Aus Frankreich.","Skąd pan pochodzi? – Z Francji."],["Ich fahre mit dem Auto zur Arbeit.","Jadę samochodem do pracy."],["Ich fliege nicht gern.","Nie lubię latać."],["Ich möchte nicht Auto fahren, ich möchte laufen.","Nie chcę jechać autem, chcę iść pieszo."],["Ich bleibe heute zu Hause.","Zostaję dziś w domu."],["Der Bus steht schon an der Haltestelle.","Autobus stoi już na przystanku."],["Wo sitzen Sie?","Gdzie pan siedzi?"],["Frankfurt liegt am Main.","Frankfurt leży nad Menem."],["Ich schlafe meistens acht Stunden.","Zwykle śpię osiem godzin."],["Was gibt es zu essen?","Co jest do jedzenia?"],["Möchtest du etwas trinken?","Chcesz się czegoś napić?"],["Kann ich mit Herrn Klein sprechen?","Mogę rozmawiać z panem Kleinem?"],["Sag mal, wie geht es dir denn?","Powiedz, jak się miewasz?"]]},
+{"n":31,"t":"Czasowniki: mówić i widzieć","th":"Słuchać, czytać, pisać, dawać, pomagać.","w":[["sehen","widzieć","ZE-en","","hatgesehen"],["hören","słyszeć / słuchać","HÖ-ren","",""],["lesen","czytać","LE-zen","","hatgelesen"],["schreiben","pisać","SZRAJ-ben","","hatgeschrieben"],["geben","dawać","GE-ben","","hatgegeben"],["nehmen","brać","NE-men","","hatgenommen"],["bringen","przynosić / zawozić","BRIN-gen","","hatgebracht"],["finden","znajdować / uważać","FIN-den","","hatgefunden"],["helfen","pomagać","HEL-fen","","hatgeholfen"],["kennen","znać","KE-nen","","hatgekannt"],["wissen","wiedzieć","WI-sen","","hatgewusst"],["heißen","nazywać się","HAJ-sen","","hat geheißen"],["machen","robić","MA-chen","",""],["tun","robić / czynić","tun","","hatgetan"],["arbeiten","pracować","AR-baj-ten","",""],["lernen","uczyć się","LER-nen","",""],["wohnen","mieszkać","WO-nen","",""]],"s":[["Ich kann dich nicht sehen.","Nie widzę cię."],["Hör mal! Was ist das?","Posłuchaj! Co to jest?"],["Ich lese ein Buch.","Czytam książkę."],["Er schreibt jeden Tag fünfzig E- Mails.","Pisze codziennie pięćdziesiąt e- maili."],["Kannst du mir deinen Kugelschreiber geben?","Możesz mi dać swój długopis?"],["Ich nehme den Bus.","Jadę autobusem."],["Bringen Sie mir bitte noch einen Kaffee!","Proszę przynieść mi jeszcze kawę!"],["Wir müssen den Schlüssel finden.","Musimy znaleźć klucz."],["Können Sie mir helfen, bitte?","Może mi pan pomóc?"],["Kennen Sie diese Frau?","Zna pan tę kobietę?"],["Weißt du, wie er heißt?","Wiesz, jak on się nazywa?"],["Ich heiße Charlotte Meier.","Nazywam się Charlotte Meier."],["Was machst du heute Abend?","Co robisz dziś wieczorem?"],["Ich habe noch etwas zu tun.","Mam jeszcze coś do zrobienia."],["Wo arbeiten Sie?","Gdzie pan pracuje?"],["Wie lange lernen Sie schon Deutsch?","Jak długo uczy się pan niemieckiego?"],["Ich wohne in München.","Mieszkam w Monachium."]]},
+{"n":32,"t":"Czasowniki: kupować i płacić","th":"Sprzedawać, kosztować, szukać, czekać, pytać.","w":[["leben","żyć / mieszkać","LE-ben","",""],["kaufen","kupować","KAŁ-fen","",""],["verkaufen","sprzedawać","fer-KAŁ-fen","",""],["kosten","kosztować","KOS-ten","",""],["zahlen / bezahlen","płacić","CA-len / be-CA-len","",""],["brauchen","potrzebować","BRAŁ-chen","",""],["suchen","szukać","ZU-chen","",""],["warten","czekać","WAR-ten","",""],["fragen","pytać","FRA-gen","",""],["antworten","odpowiadać","ANT-wor-ten","",""],["verstehen","rozumieć","fer-SZTE-en","","hatverstanden"],["erklären","wyjaśniać","er-KLE-ren","",""],["bedeuten","oznaczać","be-DOJ-ten","",""],["wiederholen","powtarzać","wi-der-HO-len","",""],["buchstabieren","literować","buch-szta-BI-ren","",""],["gefallen","podobać się","ge-FA-len","","hatgefallen"],["mögen","lubić","MÖ-gen","",""]],"s":[["Sie lebt bei ihrer Schwester.","Mieszka u swojej siostry."],["Tim kauft sich ein neues Auto.","Tim kupuje sobie nowy samochód."],["Er verkauft sein altes Auto.","Sprzedaje swój stary samochód."],["Wie viel kostet das?","Ile to kosztuje?"],["Wo muss ich bezahlen?","Gdzie mam zapłacić?"],["Brauchst du die Zeitung noch?","Potrzebujesz jeszcze tej gazety?"],["Suchst du etwas?","Szukasz czegoś?"],["Können Sie ein paar Minuten warten?","Może pan poczekać kilka minut?"],["Er möchte Sie etwas fragen.","Chciałby pana o coś zapytać."],["Er antwortet nicht.","On nie odpowiada."],["Können Sie mich verstehen?","Rozumie mnie pan?"],["Kannst du mir das erklären?","Możesz mi to wyjaśnić?"],["Was bedeutet das Wort?","Co oznacza to słowo?"],["Können Sie das bitte wiederholen?","Może pan to powtórzyć?"],["Bitte buchstabieren Sie Ihren Namen.","Proszę przeliterować swoje nazwisko."],["Das gefällt mir.","To mi się podoba."],["Magst du Kaffee oder Tee?","Wolisz kawę czy herbatę?"]]},
+{"n":33,"t":"Czasowniki: załatwiać sprawy","th":"Zamawiać, dostawać, zarabiać, odwiedzać.","w":[["lieben","kochać","LI-ben","",""],["schmecken","smakować","SZME-ken","",""],["kochen","gotować","KO-chen","",""],["bestellen","zamawiać","be-SZTE-len","",""],["bekommen","dostawać","be-KO-men","","hatbekommen"],["kriegen","dostawać (potocznie)","KRI-gen","",""],["verdienen","zarabiać","fer-DI-nen","",""],["gehören","należeć","ge-HÖ-ren","",""],["schicken","wysyłać","SZI-ken","",""],["telefonieren","rozmawiać przez telefon","te-le-fo-NI-ren","",""],["besuchen","odwiedzać","be-ZU-chen","",""],["treffen","spotykać","TRE-fen","","hatgetroffen"],["feiern","świętować","FAJ-ern","",""],["spielen","grać / bawić się","SZPI-len","",""],["gewinnen","wygrywać","ge-WI-nen","","hatgewonnen"],["tanzen","tańczyć","TAN-cen","",""],["schwimmen","pływać","SZWI-men","","istgeschwommen"]],"s":[["Ich liebe dich!","Kocham cię!"],["Schmeckt das gut?","Czy to dobrze smakuje?"],["Herr Georgi kann gut kochen.","Pan Georgi dobrze gotuje."],["Wir möchten bestellen, bitte.","Chcielibyśmy zamówić."],["Haben Sie meinen Brief bekommen?","Dostał pan mój list?"],["Ich kriege 15 Euro in der Stunde.","Dostaję 15 euro za godzinę."],["Ich verdiene 1.500 Euro im Monat.","Zarabiam 1500 euro miesięcznie."],["Wem gehört das?","Do kogo to należy?"],["Bitte schicken Sie mir eine E- Mail.","Proszę wysłać mi e-mail."],["Darf ich mal telefonieren?","Mogę zadzwonić?"],["Darf ich dich besuchen?","Mogę cię odwiedzić?"],["Wir treffen uns immer freitags.","Spotykamy się zawsze w piątki."],["Wir feiern heute meinen Geburtstag.","Świętujemy dziś moje urodziny."],["Die Kinder spielen draußen.","Dzieci bawią się na dworze."],["Wer gewinnt das Spiel?","Kto wygra mecz?"],["Tanzen Sie gern?","Lubi pan tańczyć?"],["Ich schwimme jeden Tag einen Kilometer.","Pływam codziennie kilometr."]]},
+{"n":34,"t":"Czasowniki: dom i porządki","th":"Myć, sprzątać, wynajmować, otwierać, zamykać.","w":[["wandern","wędrować","WAN-dern","",""],["lachen","śmiać się","LA-chen","",""],["rauchen","palić","RAŁ-chen","",""],["baden","kąpać się","BA-den","",""],["duschen","brać prysznic","DU-szen","",""],["waschen","myć / prać","WA-szen","","hatgewaschen"],["putzen / reparieren","naprawiać","re-pa-RI-ren","",""],["mieten","wynajmować (brać)","MI-ten","",""],["vermieten","wynajmować (dawać)","fer-MI-ten","",""],["holen","przynieść / odebrać","HO-len","",""],["legen","kłaść","LE-gen","",""],["öffnen","otwierać","ÖF-nen","",""],["schließen","zamykać","SZLI-sen","","hatgeschlossen"],["beginnen","zaczynać","be-GI-nen","","hatbegonnen"],["enden","kończyć się","EN-den","",""],["dauern","trwać","DAŁ-ern","",""],["halten","zatrzymywać się","HAL-ten","","hatgehalten"]],"s":[["Wir wandern um den Chiemsee.","Wędrujemy wokół jeziora Chiemsee."],["Die Kinder lachen viel.","Dzieci dużo się śmieją."],["Ich rauche nicht.","Nie palę."],["Ich bade nicht so gern, ich dusche lieber.","Nie lubię się kąpać, wolę prysznic."],["Ich dusche lieber.","Wolę wziąć prysznic."],["Wo kann ich mir die Hände waschen?","Gdzie mogę umyć ręce?"],["Er hat das Fahrrad repariert.","Naprawił rower."],["Ich möchte ein Auto mieten.","Chciałbym wynająć samochód."],["Die Wohnung ist schon vermietet.","Mieszkanie jest już wynajęte."],["Ich hole zwei Flaschen Wasser aus der Küche.","Przyniosę dwie butelki wody z kuchni. Ecke! — Postaw torbę po prawej w rogu!"],["Legen Sie das Buch auf den Tisch.","Proszę położyć książkę na stole."],["Ich öffne die Tür.","Otwieram drzwi."],["Bitte schließen Sie die Tür.","Proszę zamknąć drzwi."],["Das Spiel beginnt um 15.30 Uhr.","Mecz zaczyna się o 15:30."],["Die Straße endet hier.","Ulica kończy się tutaj."],["Wie lange dauert der Film?","Jak długo trwa film?"],["Dieser Zug hält nicht in Rüdesheim.","Ten pociąg nie zatrzymuje się w Rüdesheim."]]},
+{"n":35,"t":"Czasowniki: urzędy i podpisy","th":"Używać, drukować, podpisywać, przelewać, polecać.","w":[["fehlen","brakować","FE-len","",""],["glauben","wierzyć / sądzić","GLAŁ-ben","",""],["heiraten","brać ślub","HAJ-ra-ten","",""],["erzählen","opowiadać","er-CE-len","",""],["studieren","studiować","sztu-DI-ren","",""],["benutzen","używać","be-NU-cen","",""],["drucken","drukować","DRU-ken","",""],["drücken","naciskać","DRÜ-ken","",""],["unterschreiben","podpisywać","un-ter-SZRAJ-ben","",""],["überweisen","przelewać (pieniądze)","ü-ber-WAJ-zen","",""],["übernachten","nocować","ü-ber-NACH-ten","",""],["besichtigen","zwiedzać","be-ZICH-ti-gen","",""],["empfehlen","polecać","emp-FE-len","","hatempfohlen"],["erlauben","pozwalać","er-LAŁ-ben","",""],["kümmern","troszczyć się","KÜ-mern","","sich"],["freuen","cieszyć się","FROJ-en","","sich"],["riechen","pachnieć","RI-chen","","hatgerochen"]],"s":[["Herr Müller fehlt schon seit drei Tagen.","Pana Müllera nie ma już od trzech dni."],["Ich glaube, er kommt gleich.","Sądzę, że zaraz przyjdzie."],["Meine Schwester heiratet einen Japaner.","Moja siostra wychodzi za Japończyka."],["Wir müssen euch etwas erzählen!","Musimy wam coś opowiedzieć!"],["Ich studiere in Mainz.","Studiuję w Moguncji."],["Die Aufzüge bitte nicht benutzen!","Proszę nie używać wind!"],["Bitte drucke das Formular für mich.","Wydrukuj proszę dla mnie formularz."],["Drück hier, dann geht der Computer an.","Naciśnij tutaj, wtedy komputer się włączy."],["Wo muss ich unterschreiben?","Gdzie mam podpisać?"],["Sie können das Geld auch überweisen.","Może pan też przelać pieniądze."],["Du kannst bei mir übernachten.","Możesz przenocować u mnie."],["Ich möchte gern den Dom besichtigen.","Chciałbym zwiedzić katedrę."],["Welchen Wein können Sie mir empfehlen?","Jakie wino może mi pan polecić?"],["Rauchen ist hier nicht erlaubt.","Palenie jest tu niedozwolone."],["Jede Mutter kümmert sich um ihre Kinder.","Każda matka troszczy się o swoje dzieci."],["Ich freue mich auf den Urlaub.","Cieszę się na urlop."],["Dieser Wein riecht gut.","To wino ładnie pachnie."]]},
+{"n":36,"t":"Rozdzielne I","th":"Przedrostek odskakuje na koniec zdania. To niemiecka specjalność.","w":[["scheinen","świecić","SZAJ-nen","","hatgeschienen"],["regnen","padać (deszcz)","REG-nen","",""],["grillen","grillować","GRI-len","",""],["reisen","podróżować","RAJ-zen","",""],["Rad fahren","jeździć na rowerze","rat FA-ren","",""],["an|rufen","dzwonić","AN-ru-fen","",""],["an|fangen","zaczynać się","AN-fan-gen","",""],["auf|hören","kończyć się / przestawać","AŁF-hö-ren","",""],["auf|stehen","wstawać","AŁF-szte-en","",""],["ab|fahren","odjeżdżać","AP-fa-ren","",""],["ab|holen","odbierać (kogoś/coś)","AP-ho-len","",""],["ab|geben","oddawać","AP-ge-ben","",""],["an|kommen","przyjeżdżać","AN-ko-men","",""],["ein|steigen","wsiadać","AJN-sztaj-gen","",""],["aus|steigen","wysiadać","AŁS-sztaj-gen","",""],["an|machen","włączać","AN-ma-chen","",""],["aus|machen","wyłączać","AŁS-ma-chen","",""]],"s":[["Die Sonne scheint.","Świeci słońce."],["Heute regnet es.","Dziś pada."],["Heute grillen wir im Garten.","Dziś grillujemy w ogrodzie."],["Ich reise gern.","Lubię podróżować."],["Das Kind kann schon Rad fahren.","Dziecko już umie jeździć na rowerze."],["Peter ruft kurz seine Freundin an.","Peter dzwoni na chwilę do dziewczyny."],["Der Unterricht fängt gleich an.","Zajęcia zaraz się zaczynają."],["Der Kurs hört in einer Woche auf.","Kurs kończy się za tydzień."],["Ich muss immer um vier Uhr aufstehen.","Zawsze muszę wstawać o czwartej."],["Wir fahren um zwölf Uhr ab.","Odjeżdżamy o dwunastej."],["Wir müssen noch meinen Bruder abholen.","Musimy jeszcze odebrać mojego brata."],["Ich muss meine Schlüssel abgeben.","Muszę oddać klucze."],["Wann kommt dieser Zug in Hamburg an?","Kiedy ten pociąg przyjeżdża do Hamburga?"],["Schnell, steig ein, der Zug fährt gleich.","Szybko, wsiadaj, pociąg zaraz odjeżdża."],["Wo muss ich aussteigen?","Gdzie mam wysiąść?"],["Mach bitte das Licht an!","Włącz proszę światło!"],["Mach bitte das Licht aus!","Wyłącz proszę światło!"]]},
+{"n":37,"t":"Rozdzielne II","th":"Zapraszać, przynosić, oglądać telewizję, przedstawiać się.","w":[["an|ziehen","ubierać (się)","AN-ci-en","","sich"],["aus|ziehen","rozbierać (się)","AŁS-ci-en","","sich"],["an|melden","zapisywać się","AN-mel-den","","sich"],["aus|füllen","wypełniać","AŁS-fü-len","",""],["an|klicken","klikać","AN-kli-ken","",""],["an|bieten","oferować","AN-bi-ten","",""],["ein|kaufen","robić zakupy","AJN-kał-fen","",""],["ein|laden","zapraszać","AJN-la-den","",""],["mit|bringen","przynosić ze sobą","MIT-brin-gen","",""],["mit|kommen","iść z kimś","MIT-ko-men","",""],["mit|machen","brać udział","MIT-ma-chen","",""],["mit|nehmen","zabierać ze sobą","MIT-ne-men","",""],["fern|sehen","oglądać telewizję","FERN-ze-en","",""],["um|ziehen","przeprowadzać się","UM-ci-en","",""],["kennen|lernen","poznawać","KE-nen-ler-nen","",""],["vor|stellen","przedstawiać (się)","FOR-szte-len","","sich"],["weh|tun","boleć","WE-tun","",""]],"s":[["Ich muss mich noch anziehen.","Muszę się jeszcze ubrać."],["Zieh die Schuhe aus, bitte!","Zdejmij proszę buty!"],["Wo kann ich mich anmelden?","Gdzie mogę się zapisać?"],["Füllen Sie bitte dieses Formular aus.","Proszę wypełnić ten formularz. pan coś zaznaczyć."],["Da musst du dieses Wort anklicken.","Musisz kliknąć w to słowo."],["Was darf ich dir anbieten?","Co mogę ci zaproponować?"],["Ich muss noch für morgen einkaufen.","Muszę zrobić zakupy na jutro."],["Darf ich Sie zu einem Kaffee einladen?","Mogę zaprosić pana na kawę?"],["Soll ich dir was mitbringen?","Mam ci coś przynieść?"],["Ich gehe ins Kino. Kommst du mit?","Idę do kina. Idziesz ze mną?"],["Warum macht ihr nicht mit?","Czemu nie bierzecie udziału?"],["Nehmen wir meine Schwester ins Kino mit?","Zabierzemy moją siostrę do kina?"],["Wollen wir heute Abend fernsehen?","Obejrzymy dziś wieczorem telewizję?"],["Nächsten Monat ziehen wir um.","W przyszłym miesiącu się przeprowadzamy."],["Wir möchten Sie kennenlernen.","Chcielibyśmy pana poznać."],["Können Sie sich bitte vorstellen?","Może się pan przedstawić?"],["Mein Bein tut weh.","Boli mnie noga."]]},
+{"n":38,"t":"Modalne i pierwsze opisy","th":"können, müssen, dürfen, wollen — plus dobry i zły.","w":[["können","móc / umieć","KÖ-nen","",""],["müssen","musieć","MÜ-sen","",""],["dürfen","mieć pozwolenie","DÜR-fen","",""],["wollen","chcieć","WO-len","",""],["möchten","chcieć / chciałbym","MÖCH-ten","",""],["sollen","mieć powinność","ZO-len","",""],["mögen","lubić","MÖ-gen","",""],["gut","dobry","gut","",""],["schlecht","zły","szlecht","",""],["groß","duży / wysoki","gros","",""],["klein","mały","klajn","",""],["neu","nowy","noj","",""],["alt","stary","alt","",""],["jung","młody","jung","",""],["lang","długi","lang","",""],["breit","szeroki","brajt","",""],["hoch","wysoki","hoch","",""],["teuer","drogi","TOJ-er","",""]],"s":[["Ich kann Deutsch und Russisch.","Umiem po niemiecku i po rosyjsku."],["Ich muss jeden Tag von 8 bis 18 Uhr arbeiten.","Muszę pracować codziennie od 8 do 18."],["Sie dürfen hier nicht rauchen.","Nie wolno tu panu palić."],["Wollen Sie einen Kaffee trinken?","Chce pan napić się kawy?"],["Was möchten Sie trinken?","Co chciałby pan wypić?"],["Soll ich kommen?","Mam przyjść?"],["Ich mag keinen Fisch.","Nie lubię ryb."],["Das finde ich gut.","Uważam, że to dobre."],["Wir haben schlechtes Wetter.","Mamy złą pogodę."],["Frankfurt ist eine große Stadt.","Frankfurt to duże miasto."],["Eltville ist eine kleine Stadt am Rhein.","Eltville to małe miasto nad Renem."],["Ich bin der neue Kollege.","Jestem nowym kolegą."],["Wir wohnen in einem sehr alten Haus.","Mieszkamy w bardzo starym domu."],["Claudia ist 21. – Was? Noch so jung?","Claudia ma 21 lat. – Co? Taka młoda?"],["Die Jeans ist zu lang.","Dżinsy są za długie. krótkie włosy."],["Wie breit ist der Schrank?","Jak szeroka jest szafa?"],["Der Mount Everest ist 8.880 Meter hoch.","Mount Everest ma 8880 metrów wysokości."],["Das ist mir zu teuer.","To dla mnie za drogie."]]},
+{"n":39,"t":"Jaki? Opisy I","th":"Tani, ładny, łatwy, trudny, szybki, wolny.","w":[["billig","tani","BI-lich","",""],["günstig","korzystny / w dobrej cenie","GÜNS-tich","",""],["schön","piękny / ładny","szön","",""],["wunderbar","cudowny","WUN-der-bar","",""],["leicht","lekki / łatwy","lajcht","",""],["schwer","ciężki / trudny","szwer","",""],["einfach","prosty / łatwy","AJN-fach","",""],["schnell","szybki","sznel","",""],["langsam","wolny / powolny","LANG-zam","",""],["laut","głośny","lałt","",""],["leise","cichy","LAJ-ze","",""],["hell","jasny","hel","",""],["kaputt","zepsuty","ka-PUT","",""],["fertig","gotowy","FER-tich","",""],["frei","wolny","fraj","",""],["besetzt","zajęty","be-ZECT","",""],["richtig","poprawny / prawidłowy","RICH-tich","",""],["falsch","błędny / fałszywy","falsz","",""]],"s":[["Die Jacke kostet nur 10 Euro! Die ist billig!","Kurtka kosztuje tylko 10 euro! Jest tania!"],["Dort gibt es günstige Angebote.","Tam są korzystne oferty."],["Das ist sehr schön.","To bardzo piękne."],["Das Essen schmeckt wunderbar.","Jedzenie smakuje cudownie."],["Der Koffer ist leicht.","Walizka jest lekka."],["Das ist eine schwere Arbeit.","To ciężka praca."],["Die Prüfung ist ganz einfach.","Egzamin jest całkiem prosty."],["Er fährt schnell.","On jedzie szybko."],["Könnten Sie bitte etwas langsamer sprechen?","Mógłby pan mówić trochę wolniej?"],["Nicht so laut! Das Baby schläft.","Nie tak głośno! Dziecko śpi."],["Seid leise. Die anderen schlafen schon.","Bądźcie cicho. Inni już śpią."],["Im Sommer ist es bis 21 Uhr hell.","Latem jest jasno do 21."],["Das Glas geht sehr leicht kaputt.","Szkło bardzo łatwo się tłucze."],["Bist du fertig?","Jesteś gotowy?"],["Ist der Platz noch frei?","Czy to miejsce jest jeszcze wolne?"],["Der Platz ist besetzt.","Miejsce jest zajęte."],["Habe ich das richtig verstanden?","Czy dobrze zrozumiałem?"],["Das ist falsch.","To jest błędne."]]},
+{"n":40,"t":"Jaki? Opisy II","th":"Ważny, możliwy, spokojny, wesoły, szczęśliwy.","w":[["wichtig","ważny","WICH-tich","",""],["möglich","możliwy","MÖG-lich","",""],["ruhig","spokojny","RU-ich","",""],["lustig","wesoły / zabawny","LUS-tich","",""],["böse","zły / rozgniewany","BÖ-ze","",""],["glücklich","szczęśliwy","GLÜK-lich","",""],["zufrieden","zadowolony","cu-FRI-den","",""],["fremd","obcy","fremt","",""],["verboten","zabroniony","fer-BO-ten","",""],["gültig","ważny (dokument)","GÜL-tich","",""],["normal","normalny","nor-MAL","",""],["eilig","pilny / w pośpiechu","AJ-lich","",""],["weit","daleko","wajt","",""],["viel","dużo","fil","",""],["wenig","mało","WE-nich","",""],["mehr","więcej","mer","",""],["besser","lepszy","BE-ser","",""],["gern","chętnie","gern","","e"]],"s":[["Dieses Formular ist sehr wichtig.","Ten formularz jest bardzo ważny."],["Mit dieser Fahrkarte ist die Fahrt ab 9 Uhr möglich.","Z tym biletem podróż jest możliwa od 9."],["Ich möchte ein ruhiges Zimmer.","Chciałbym spokojny pokój."],["Frau Mertens ist lustig. Sie lacht immer.","Pani Mertens jest wesoła. Zawsze się śmieje."],["Sie ist böse auf mich.","Ona jest na mnie zła."],["Meine Kinder sind glücklich verheiratet.","Moje dzieci są szczęśliwie zamężne/żonate."],["Ich bin mit der Wohnung zufrieden.","Jestem zadowolony z mieszkania."],["Das weiß ich nicht; ich bin fremd hier.","Nie wiem; jestem tu obcy."],["Hier ist Rauchen verboten.","Palenie jest tu zabronione."],["Der Pass ist nicht mehr gültig.","Paszport jest już nieważny."],["75 kg. Sein Gewicht ist normal.","75 kg. Jego waga jest normalna."],["Hast du es eilig?","Spieszy ci się?"],["Zum Bahnhof ist es nicht weit.","Do dworca nie jest daleko."],["Hier regnet es viel.","Tu dużo pada."],["Ich habe leider nur wenig verstanden.","Niestety zrozumiałem niewiele."],["Dieses Auto kostet 1.000 Euro mehr.","Ten samochód kosztuje 1000 euro więcej."],["Es geht mir schon besser.","Już czuję się lepiej."],["Ich gehe gerne einkaufen.","Chętnie chodzę na zakupy."]]},
+{"n":41,"t":"Jak często, jak bardzo","th":"Chętniej, często, zawsze, nigdy, już, jeszcze.","w":[["lieber","chętniej / raczej","LI-ber","",""],["oft","często","oft","",""],["immer","zawsze","I-mer","",""],["nie","nigdy","ni","",""],["schon","już","szon","",""],["noch","jeszcze","noch","",""],["nur","tylko","nur","",""],["auch","też","ałch","",""],["vielleicht","być może","fi-LAJCHT","",""],["sofort","natychmiast","zo-FORT","",""],["zusammen","razem","cu-ZA-men","",""],["allein","sam","a-LAJN","",""],["bisschen","trochę","BIS-chen","",""],["oben","na górze","O-ben","",""],["unten","na dole","UN-ten","",""],["hinten","z tyłu","HIN-ten","",""],["draußen","na zewnątrz","DRAŁ-sen","",""],["hier","tutaj","hir","",""]],"s":[["Sie fährt lieber mit der Bahn.","Ona woli jechać koleją."],["Petra treffe ich oft.","Petrę spotykam często."],["Frau Bast kommt immer zu spät.","Pani Bast zawsze się spóźnia."],["Er kommt nie pünktlich.","On nigdy nie przychodzi punktualnie."],["Ist das Essen schon fertig?","Czy jedzenie jest już gotowe?"],["Wir warten noch fünf Minuten.","Poczekamy jeszcze pięć minut."],["Ich möchte nur ein Glas Wasser.","Chcę tylko szklankę wody."],["Ich bin auch Spanier.","Ja też jestem Hiszpanem."],["Ich komme vielleicht mit dem Bus.","Może przyjadę autobusem."],["Bitte antworten Sie sofort.","Proszę odpowiedzieć natychmiast."],["Sollen wir zusammen essen gehen?","Może pójdziemy razem coś zjeść?"],["Er kommt allein.","On przychodzi sam."],["Ich spreche ein bisschen Deutsch.","Mówię trochę po niemiecku."],["Ich wohne oben.","Mieszkam na górze."],["Er wohnt ganz unten im Haus.","Mieszka na samym dole w tym domu."],["Die Tür zum Aussteigen ist hinten.","Drzwi do wysiadania są z tyłu."],["Wollen wir draußen sitzen?","Może usiądziemy na zewnątrz?"],["Hier wohne ich.","Tutaj mieszkam."]]},
+{"n":42,"t":"Zaimki osobowe","th":"ich, du, er, sie, es, wir — kto wykonuje czynność.","w":[["da / dort","tam","da / dort","",""],["geöffnet","otwarty","ge-ÖF-net","",""],["geschlossen","zamknięty","ge-SZLO-sen","",""],["ich","ja","ich","",""],["du","ty","du","",""],["er","on","er","",""],["sie","ona / oni","zi","",""],["es","ono / to","es","",""],["wir","my","wir","",""],["ihr","wy","ir","",""],["Sie","pan / pani / państwo","zi","",""],["mich / mir","mnie / mi","mich / mir","",""],["dich / dir","ciebie / tobie","dich / dir","",""],["ihn / ihm","jego / jemu","in / im","",""],["sich","się / siebie","zich","",""],["mein","mój","majn","",""],["dein","twój","dajn","",""]],"s":[["Dort ist unser Haus.","Tam jest nasz dom."],["Der Laden ist bis 16 Uhr geöffnet.","Sklep jest otwarty do 16."],["Die Bank hat am Samstag geschlossen.","Bank jest w sobotę zamknięty."],["Ich heiße Veronika.","Nazywam się Veronika."],["Wie heißt du?","Jak masz na imię?"],["Er heißt Ali.","On nazywa się Ali."],["Wie heißt sie?","Jak ona ma na imię?"],["Es regnet.","Pada."],["Wir lernen Deutsch.","Uczymy się niemieckiego."],["Warum macht ihr nicht mit?","Czemu nie bierzecie udziału?"],["Wie heißen Sie, bitte?","Jak się pan nazywa?"],["Können Sie mir helfen?","Może mi pan pomóc?"],["Die Blumen sind für dich.","Kwiaty są dla ciebie."],["Ruf ihn bitte an.","Zadzwoń do niego, proszę."],["Sie müssen sich erst anmelden.","Musi się pan najpierw zapisać."],["Mein Vater ist Arzt.","Mój ojciec jest lekarzem."],["Ist das dein Auto?","Czy to twój samochód?"]]},
+{"n":43,"t":"Ten, tamten, każdy","th":"Zaimki wskazujące i dzierżawcze.","w":[["sein","jego","zajn","",""],["ihr","jej / ich","ir","",""],["unser","nasz","UN-zer","",""],["euer","wasz","OJ-er","",""],["dies-","ten / ta / to","dis","",""],["ander-","inny","AN-der","",""],["jed-","każdy","jet","",""],["all-","wszystko / wszyscy","al","",""],["beide","oboje / obaj","BAJ-de","",""],["welch-","który","welch","",""],["kein","żaden / nie ma","kajn","",""],["nichts","nic","nichts","",""],["man","się (bezosobowo)","man","",""],["meist-","większość","MAJST","",""],["letzt-","ostatni","LECT","",""],["nächst-","następny","NECHST","",""],["wer","kto","wer","",""]],"s":[["Sein Bruder arbeitet auch hier.","Jego brat też tu pracuje."],["Ihre Eltern leben nicht mehr.","Jej rodzice już nie żyją."],["Das ist unsere Lehrerin.","To nasza nauczycielka."],["Euer Kurs beginnt heute.","Wasz kurs zaczyna się dzisiaj."],["Ich nehme lieber diesen Kuchen.","Wolę wziąć to ciasto."],["Willst du diese Jacke? – Nein, die andere.","Chcesz tę kurtkę? – Nie, tamtą drugą."],["Blumen kannst du in jedem Bahnhof kaufen.","Kwiaty kupisz na każdym dworcu."],["Alles Gute!","Wszystkiego dobrego!"],["Wir kommen beide.","Przychodzimy oboje."],["Welches Buch möchtest du?","Którą książkę chcesz?"],["Es gibt keine Eintrittskarten mehr.","Nie ma już biletów wstępu."],["Das macht nichts.","To nic nie szkodzi."],["Hier darf man nicht rauchen.","Tu nie wolno palić."],["Die meisten Norddeutschen sind sehr groß.","Większość Niemców z północy jest bardzo wysoka."],["Morgen ist der letzte Kurstag.","Jutro jest ostatni dzień kursu."],["Sehen wir uns nächste Woche?","Zobaczymy się w przyszłym tygodniu?"],["Wer ist das?","Kto to jest?"]]},
+{"n":44,"t":"Pytania i przyimki","th":"woher, wohin, wann, warum — i pierwsze przyimki.","w":[["was","co","was","",""],["wo","gdzie","wo","",""],["woher","skąd","wo-HER","",""],["wohin","dokąd","wo-HIN","",""],["wann","kiedy","wan","",""],["warum","dlaczego","wa-RUM","",""],["wie","jak","wi","",""],["wie viel","ile","wi FIL","",""],["was für ein","jaki","was für ajn","",""],["in","w / do","in","",""],["an","przy / na","an","",""],["auf","na","ałf","",""],["aus","z (pochodzenie)","ałs","",""],["bei","u / przy","baj","",""],["mit","z (razem)","mit","",""],["nach","do / po","nach","",""],["von","od / z","fon","",""]],"s":[["Was ist das?","Co to jest?"],["Wo ist die Post?","Gdzie jest poczta?"],["Woher kommen Sie?","Skąd pan pochodzi?"],["Wohin fährt dieser Bus?","Dokąd jedzie ten autobus?"],["Wann bist du fertig?","Kiedy będziesz gotowy?"],["Warum kommt er nicht?","Dlaczego on nie przychodzi?"],["Wie heißt du?","Jak masz na imię?"],["Wie viel kostet das?","Ile to kosztuje?"],["Was für eine Farbe möchten Sie?","Jaki kolor pan sobie życzy?"],["Ich wohne in Wiesbaden.","Mieszkam w Wiesbaden."],["Wir treffen uns am Bahnhof.","Spotykamy się na dworcu."],["Die Kinder spielen auf der Straße.","Dzieci bawią się na ulicy."],["Er kommt aus Brasilien.","On pochodzi z Brazylii."],["Ich wohne bei meinen Eltern.","Mieszkam u rodziców."],["Trinken Sie den Kaffee mit Milch?","Pije pan kawę z mlekiem?"],["Ich fliege nach München.","Lecę do Monachium."],["Das Auto von Felix ist kaputt.","Samochód Felixa jest zepsuty."]]},
+{"n":45,"t":"Przyimki i spójniki","th":"über, unter, vor, seit — i słowa łączące zdania.","w":[["zu","do","cu","",""],["für","dla / na","für","",""],["ohne","bez","O-ne","",""],["über","nad / przez / powyżej","Ü-ber","",""],["unter","pod","UN-ter","",""],["vor","przed","for","",""],["zwischen","między","CWI-szen","",""],["durch","przez","durch","",""],["gegen","przeciw / o","GE-gen","",""],["seit","od (czasu)","zajt","",""],["bis","do","bis","",""],["ab","od","ap","",""],["um","o (godzinie) / wokół","um","",""],["und","i","unt","",""],["oder","albo","O-der","",""],["aber","ale","A-ber","",""],["denn","ponieważ / bo","den","",""]],"s":[["Der Bus fährt zum Bahnhof.","Autobus jedzie na dworzec."],["Das ist für Sie.","To dla pana."],["Ohne Geld kann er nichts kaufen.","Bez pieniędzy nic nie kupi."],["Gehen Sie hier über die Straße.","Proszę tu przejść przez ulicę."],["Unter uns wohnt eine Familie.","Pod nami mieszka rodzina."],["Das Auto steht vor der Tür.","Samochód stoi przed drzwiami."],["Heidelberg liegt zwischen Frankfurt und Stuttgart.","Heidelberg leży między Frankfurtem a Stuttgartem."],["Gehen Sie durch die Breite Straße.","Proszę iść przez Breite Straße."],["Ich bin gegen diese Lösung.","Jestem przeciw temu rozwiązaniu."],["Ich wohne seit drei Jahren in Köln.","Mieszkam w Kolonii od trzech lat."],["Ich fahre nur bis Stuttgart.","Jadę tylko do Stuttgartu."],["Ab morgen muss ich arbeiten.","Od jutra muszę pracować."],["Er kommt um sieben Uhr.","Przyjdzie o siódmej."],["Peter und Helmut sind meine Söhne.","Peter i Helmut to moi synowie."],["Heute oder morgen?","Dziś czy jutro?"],["Ich bin oft im Büro, aber nur für wenige Stunden.","Często jestem w biurze, ale tylko na kilka godzin."],["Ich kann nicht kommen, denn ich bin krank.","Nie mogę przyjść, bo jestem chory."]]}
+];
+const PRULES=[["ei","aj","mein = majn"],["ie","długie i","Bier = bir"],["eu / äu","oj","neun = nojn"],["au","ał","Haus = hałs"],["sch","sz","Schule = SZU-le"],["st- / sp- na początku","szt / szp","Stadt = sztat"],["z","c","Zeit = cajt"],["s przed samogłoską","z","Sonne = ZO-ne"],["ß / ss","s","Fuß = fus"],["v","f","Vater = FA-ter"],["w","w","Wasser = WA-ser"],["h po samogłosce","nie czytamy, przedłuża","Bahn = ban"],["-ig na końcu","-ich (miękko)","billig = BI-lich"],["ch po a, o, u","twarde ch","Nacht = nacht"],["ch po e, i, ä, ö, ü","miękkie ch","ich = ich"]];
+const PRONQ=[["Wiederhören","WI-der-hö-ren","wi-DER-hö-ren|wi-der-HÖ-ren|wi-der-hö-REN","do usłyszenia (przez telefon)"],["Entschuldigung","ent-SZUL-di- gung","ENT-szul-di- gung|ent-szul-DI- gung|ent-szul-di- GUNG","przepraszam"],["entschuldigen","ent-SZUL-di-gen","ENT-szul-di-gen|ent-szul-DI-gen|ent-szul-di-GEN","przepraszać"],["gratulieren","gra-tu-LI-ren","GRA-tu-li-ren|gra-TU-li-ren|gra-tu-li-REN","gratulować"],["sechzehn","ZECH-cejn","ZECH-zejn|sECH-cejn|zech-CEJN","szesnaście"],["siebzehn","ZIB-cejn","ZIB-zejn|sIB-cejn|zib-CEJN","siedemnaście"],["zwanzig","CWAN-cich cich","CWAN-zich cich|CWAN-cich cig|cwan-CICH CICH","dwadzieścia"],["vierzig","FIR-cich","FIR-zich|FIR-cijch|FIR-cig","czterdzieści"],["fünfzig","FÜNF-cich","FÜNF-zich|FÜNF-cig|fünf-CICH","pięćdziesiąt"],["sechzig","ZECH-cich","ZECH-zich|sECH-cich|ZECH-cig","sześćdziesiąt"],["siebzig","ZIB-cich","ZIB-zich|ZIB-cijch|sIB-cich","siedemdziesiąt"],["achtzig","ACHT-cich","ACHT-zich|ACHT-cig|acht-CICH","osiemdziesiąt"],["neunzig","NOJN-cich","NOJN-zich|NOJN-cig|nojn-CICH","dziewięćdziesiąt"],["Sekunde","ze-KUN-de","se-KUN-de|ZE-kun-de|ze-kun-DE","sekunda"],["Wochenende","WO-chen-en-de","wo-CHEN-en-de|wo-chen-EN-de|wo-chen-en-DE","weekend"],["September","zep-TEM-ber","sep-TEM-ber|ZEP-tem-ber|zep-tem-BER","wrzesień"],["Kilometer","ki-lo-ME-ter","KI-lo-me-ter|ki-LO-me-ter|ki-lo-me-TER","kilometr"],["Europa","oj-RO-pa","eu-RO-pa|OJ-ro-pa|oj-ro-PA","Europa"],["Ausländer","AŁS-len-der","AŁS-lan-der|ałs-LEN-der|ałs-len-DER","cudzoziemiec"],["ausländisch","AŁS-len-disz","AŁS-len-disch|AŁS-lan-disz|ałs-LEN-disz","zagraniczny"],["international","in-ter-na-cjo-NAL","IN-ter-na-cjo-nal|in-TER-na-cjo-nal|in-ter-NA-cjo-nal","międzynarodowy"],["Familienname","fa-MI-lien-na-me","fa-MI-lijen-na-me|FA-mi-lien-na-me|fa-mi-LIEN-na-me","nazwisko"],["Postleitzahl","POST-lajt-cal","POST-lejt-cal|POST-lajt-zal|post-LAJT-cal","kod pocztowy"],["Familienstand","fa-MI-lien-sztant","fa-MI-lijen-sztant|fa-MI-lien-sztand|FA-mi-lien-sztant","stan cywilny"],["verheiratet","fer-HAJ-ra-tet","wer-HAJ-ra-tet|FER-haj-ra-tet|fer-haj-RA-tet","żonaty / zamężna"],["Familie","fa-MI-lie","fa-MI-lije|FA-mi-lie|fa-mi-LIE","rodzina"],["Großvater","GROS-fa-ter","GROS-wa-ter|gros-FA-ter|gros-fa-TER","dziadek"],["Ehefrau","E-e-frał","E-e-frau|e-E-frał|e-e-FRAŁ","żona"],["Jugendliche","JU-gent-li-che","ju-GENT-li-che|ju-gent-LI-che|ju-gent-li-CHE","nastolatek"],["Erwachsene","er-WAK-se-ne","ER-wak-se-ne|er-wak-SE-ne|er-wak-se-NE","dorosły"],["Verwandte","fer-WAN-te","wer-WAN-te|FER-wan-te|fer-wan-TE","krewny"],["Toilette","to-a-LE-te","TO-a-le-te|to-A-le-te|to-a-le-TE","toaleta"],["Vermieter","fer-MI-ter","wer-MI-ter|FER-mi-ter|fer-mi-TER","wynajmujący"],["Lebensmittel","LE-bens-mi-tel","le-BENS-mi-tel|le-bens-MI-tel|le-bens-mi-TEL","artykuły spożywcze"],["Speisekarte","SZPAJ-ze-kar-te","szpaj-ZE-kar-te|szpaj-ze-KAR-te|szpaj-ze-kar-TE","karta dań"],["Bäckerei","be-ke-RAJ","ba-ke-RAJ|BE-ke-raj|be-KE-raj","piekarnia"],["Zigarette","ci-ga-RE-te","zi-ga-RE-te|CI-ga-re-te|ci-GA-re-te","papieros"],["Anzeige","AN-caj-ge","AN-cej-ge|AN-zaj-ge|an-CAJ-ge","ogłoszenie"],["Verkäufer","fer-KOJ-fer","wer-KOJ-fer|far-KOJ-fer|FER-koj-fer","sprzedawca"],["Reisebüro","RAJ-ze-bü-ro","raj-ZE-bü-ro|raj-ze-BÜ-ro|raj-ze-bü-RO","biuro podróży"],["Reiseführer","RAJ-ze-fü-rer","raj-ZE-fü-rer|raj-ze-FÜ-rer|raj-ze-fü-RER","przewodnik"],["Haltestelle","HAL-te-szte-le","hal-TE-szte-le|hal-te-SZTE-le|hal-te-szte-LE","przystanek"],["Automat","ał-to-MAT","au-to-MAT|AŁ-to-mat|ał-TO-mat","automat"],["Rezeption","re-cep-CJON","re-zep-CJON|RE-cep-cjon|re-CEP-cjon","recepcja"],["Doppelzimmer","DO-pel-ci-mer","DO-pel-zi-mer|do-PEL-ci-mer|do-pel-CI-mer","pokój dwuosobowy"],["Einzelzimmer","AJN-cel-ci-mer","AJN-zel-ci-mer|ajn-CEL-ci-mer|ajn-cel-CI-mer","pokój jednoosobowy"],["Urlaub","UR-lałp","UR-laup|UR-lałb|ur-LAŁP","urlop"],["Sehenswürdigkeit","ZE-ens-wür-dich-kajt","ZE-ens-wür-dich-kejt|sE-ens-wür-dich-kajt|ze-ENS-wür-dich-kajt","zabytek / atrakcja"],["geradeaus","ge-RA-de-ałs","ge-RA-de-aus|GE-ra-de-ałs|ge-ra-DE-ałs","prosto"],["Arbeitsplatz","AR-bajts-plac","AR-bejts-plac|AR-bajts-plaz|ar-BAJTS-plac","miejsce pracy"],["arbeitslos","AR-bajts-los","AR-bejts-los|ar-BAJTS-los|ar-bajts-LOS","bezrobotny"],["Feierabend","FAJ-er-a-bent","FAJ-er-a-bend|faj-ER-a-bent|faj-er-A-bent","koniec pracy"],["selbstständig","ZELPST-szten-dich","sELPST-szten-dich|ZELPST-szten-dig|ZELPST-sztan-dich","samodzielny / na swoim"],["Kindergarten","KIN-der-gar-ten","kin-DER-gar-ten|kin-der-GAR-ten|kin-der-gar-TEN","przedszkole"],["Kugelschreiber","KU-gel-szraj-ber","KU-gel-szrej-ber|KU-gel-schraj-ber|ku-GEL-szraj-ber","długopis"],["Unterschrift","UN-ter-szrift","UN-ter-schrift|un-TER-szrift|un-ter-SZRIFT","podpis"],["Information","in-for-ma-CJON","IN-for-ma-cjon|in-FOR-ma-cjon|in-for-MA-cjon","informacja"],["Empfänger","emp-FEN-ger","amp-FEN-ger|EMP-fen-ger|emp-fen-GER","odbiorca"],["Anrufbeantworter","AN-ruf-be-ant-wor-ter","an-RUF-be-ant-wor-ter|an-ruf-BE-ant-wor-ter|an-ruf-be-ANT-wor-ter","automatyczna sekretarka"],["automatisch","ał-to-MA-tisz","ał-to-MA-tisch|au-to-MA-tisz|AŁ-to-ma-tisz","automatyczny"],["Freizeit","FRAJ-cajt","FRAJ-cejt|FRAJ-zajt|fraj-CAJT","czas wolny"],["sitzen","ZI-cen","ZI-zen|sI-cen|zi-CEN","siedzieć"],["arbeiten","AR-baj-ten","AR-bej-ten|ar-BAJ-ten|ar-baj-TEN","pracować"],["verkaufen","fer-KAŁ-fen","wer-KAŁ-fen|FER-kał-fen|fer-kał-FEN","sprzedawać"],["verstehen","fer-SZTE-en","wer-SZTE-en|FER-szte-en|fer-szte-EN","rozumieć"],["erklären","er-KLE-ren","ar-KLE-ren|ER-kle-ren|er-kle-REN","wyjaśniać"],["wiederholen","wi-der-HO-len","wij-der-HO-len|WI-der-ho-len|wi-DER-ho-len","powtarzać"],["buchstabieren","buch-szta-BI-ren","BUCH-szta-bi-ren|buch-SZTA-bi-ren|buch-szta-bi-REN","literować"],["verdienen","fer-DI-nen","wer-DI-nen|FER-di-nen|fer-di-NEN","zarabiać"],["telefonieren","te-le-fo-NI-ren","TE-le-fo-ni-ren|te-LE-fo-ni-ren|te-le-FO-ni-ren","rozmawiać przez telefon"],["vermieten","fer-MI-ten","wer-MI-ten|FER-mi-ten|fer-mi-TEN","wynajmować (dawać)"],["erzählen","er-CE-len","ar-CE-len|ER-ce-len|er-ce-LEN","opowiadać"],["studieren","sztu-DI-ren","stu-DI-ren|SZTU-di-ren|sztu-di-REN","studiować"],["benutzen","be-NU-cen","be-NU-zen|BE-nu-cen|be-nu-CEN","używać"],["unterschreiben","un-ter-SZRAJ-ben","UN-ter-szraj-ben|un-TER-szraj-ben|un-ter-szraj-BEN","podpisywać"],["überweisen","ü-ber-WAJ-zen","Ü-ber-waj-zen|ü-BER-waj-zen|ü-ber-waj-ZEN","przelewać (pieniądze)"],["übernachten","ü-ber-NACH-ten","Ü-ber-nach-ten|ü-BER-nach-ten|ü-ber-nach-TEN","nocować"],["besichtigen","be-ZICH-ti-gen","BE-zich-ti-gen|be-zich-TI-gen|be-zich-ti-GEN","zwiedzać"],["ein|steigen","AJN-sztaj-gen","AJN-sztej-gen|ajn-SZTAJ-gen|ajn-sztaj-GEN","wsiadać"],["aus|steigen","AŁS-sztaj-gen","AŁS-sztej-gen|ałs-SZTAJ-gen|ałs-sztaj-GEN","wysiadać"],["an|ziehen","AN-ci-en","AN-zi-en|AN-cij-en|an-CI-en","ubierać (się)"],["aus|ziehen","AŁS-ci-en","AŁS-zi-en|AŁS-cij-en|ałs-CI-en","rozbierać (się)"],["an|bieten","AN-bi-ten","AN-bij-ten|an-BI-ten|an-bi-TEN","oferować"],["ein|kaufen","AJN-kał-fen","AJN-kau-fen|ajn-KAŁ-fen|ajn-kał-FEN","robić zakupy"],["um|ziehen","UM-ci-en","UM-zi-en|UM-cij-en|um-CI-en","przeprowadzać się"],["kennen|lernen","KE-nen-ler-nen","ke-NEN-ler-nen|ke-nen-LER-nen|ke-nen-ler-NEN","poznawać"],["zufrieden","cu-FRI-den","zu-FRI-den|CU-fri-den|cu-fri-DEN","zadowolony"],["verboten","fer-BO-ten","wer-BO-ten|FER-bo-ten|fer-bo-TEN","zabroniony"],["vielleicht","fi-LAJCHT","wi-LAJCHT|fij-LAJCHT|FI-lajcht","być może"],["zusammen","cu-ZA-men","zu-ZA-men|CU-za-men|cu-za-MEN","razem"]];
+const GR=[
+{n:1,t:"der / die / das",pl:"rodzajnik",th:"Najważniejsza rzecz w niemieckim. Rodzajnik to część słowa.",
+forms:[["męski","<b>der</b> Mann · <b>der</b> Tisch","kolor niebieski"],
+["żeński","<b>die</b> Frau · <b>die</b> Tür","kolor czerwony"],
+["nijaki","<b>das</b> Kind · <b>das</b> Haus","kolor zielony"],
+["mnoga","<b>die</b> Männer · <b>die</b> Kinder","zawsze die, bez wyjątku"],
+["nieokreślony","<b>ein</b> Mann · <b>eine</b> Frau · <b>ein</b> Kind","jakiś / pewien"]],
+sig:["der = niebieski","die = czerwony","das = zielony","mnoga = zawsze die"],
+when:["Ucz się <b>der Tisch</b>, nigdy samego <b>Tisch</b>. Bez rodzajnika masz połowę słowa.","Końcówki <b>-ung, -heit, -keit, -schaft, -ion</b> → prawie zawsze <b>die</b>.","Zdrobnienia na <b>-chen</b> → zawsze <b>das</b>: das Mädchen, das Brötchen."],
+warn:"Rodzaj po polsku i po niemiecku często się NIE zgadza. <b>das Mädchen</b> (dziewczynka) jest nijaki, <b>die Butter</b> (masło) żeński, <b>der Tisch</b> (stół) męski. Nie zgaduj po polsku — to najczęstsza pułapka.",
+vs:["<b>der</b> Tisch — stół","<b>die</b> Tür — drzwi","Po polsku nie widzisz różnicy. Po niemiecku ta różnica wpłynie na wszystko, co przyjdzie potem."],
+q:[["____ Mann ist alt.","Der","Die|Das|Dem","Ten mężczyzna jest stary.","Mann jest rodzaju męskiego → der."],
+["____ Frau heißt Anna.","Die","Der|Das|Dem","Ta kobieta nazywa się Anna.","Frau jest rodzaju żeńskiego → die."],
+["____ Kind spielt im Garten.","Das","Der|Die|Dem","Dziecko bawi się w ogrodzie.","Kind jest rodzaju nijakiego → das."],
+["____ Mädchen ist sehr klein.","Das","Die|Der|Dem","Ta dziewczynka jest bardzo mała.","Końcówka -chen → zawsze das, mimo że mowa o dziewczynce."],
+["____ Wohnung ist groß.","Die","Der|Das|Den","To mieszkanie jest duże.","Końcówka -ung → die."],
+["____ Kinder spielen draußen.","Die","Der|Das|Den","Dzieci bawią się na dworze.","Liczba mnoga zawsze bierze die."],
+["Das ist ____ Haus.","ein","eine|einen|einer","To jest dom.","Haus = das, więc rodzajnik nieokreślony to ein."],
+["Das ist ____ Frau.","eine","ein|einen|einer","To jest kobieta.","Frau = die, więc eine."],
+["____ Tisch steht im Zimmer.","Der","Die|Das|Dem","Stół stoi w pokoju.","Tisch → der."],
+["____ Zeitung liegt hier.","Die","Der|Das|Den","Gazeta leży tutaj.","Zeitung — końcówka -ung → die."],
+["____ Brötchen kostet 50 Cent.","Das","Der|Die|Den","Bułka kosztuje 50 centów.","-chen → das."],
+["____ Auto ist neu.","Das","Der|Die|Den","Samochód jest nowy.","Auto → das."]]},
+
+{n:2,t:"Odmiana czasownika",pl:"końcówki osób",th:"Sześć końcówek. Naucz się ich raz, a odmienisz każdy regularny czasownik.",
+forms:[["wzór","wohn<b>en</b> → odcinasz -en, doklejasz końcówkę"],
+["ich","ich wohn<b>e</b>","-e"],
+["du","du wohn<b>st</b>","-st"],
+["er / sie / es","er wohn<b>t</b>","-t"],
+["wir","wir wohn<b>en</b>","-en"],
+["ihr","ihr wohn<b>t</b>","-t"],
+["sie / Sie","sie wohn<b>en</b>","-en"]],
+sig:["-e","-st","-t","-en","-t","-en"],
+when:["Odcinasz <b>-en</b> od bezokolicznika i doklejasz końcówkę osoby.","<b>Sie</b> (pan / pani) pisane wielką literą ma zawsze <b>-en</b>: <b>Wohnen Sie hier?</b>","<b>wir</b>, <b>sie</b> i <b>Sie</b> mają tę samą formę co bezokolicznik — trzy osoby za darmo."],
+warn:"Kilka czasowników zmienia samogłoskę w 2. i 3. osobie: <b>fahren → du fährst, er fährt</b>; <b>sprechen → du sprichst, er spricht</b>; <b>lesen → du liest, er liest</b>. W 1. osobie zmiany NIE ma: <b>ich fahre, ich spreche</b>.",
+vs:["ich wohn<b>e</b>","er wohn<b>t</b>","Ta jedna litera niesie całą informację o tym, kto coś robi — dokładnie jak polskie „mieszkam” i „mieszka”."],
+q:[["Ich ____ in Berlin.","wohne","wohnst|wohnt|wohnen","Mieszkam w Berlinie.","ich → końcówka -e."],
+["Du ____ sehr schnell.","lernst","lerne|lernt|lernen","Uczysz się bardzo szybko.","du → -st."],
+["Er ____ Deutsch.","lernt","lerne|lernst|lernen","On uczy się niemieckiego.","er → -t."],
+["Wir ____ am Montag.","arbeiten","arbeite|arbeitest|arbeitet","Pracujemy w poniedziałek.","wir → -en."],
+["Ihr ____ zu viel.","fragt","frage|fragst|fragen","Za dużo pytacie.","ihr → -t."],
+["Sie ____ aus Polen.","kommen","komme|kommst|kommt","Oni pochodzą z Polski.","sie (oni) → -en."],
+["____ Sie hier?","Wohnen","Wohne|Wohnst|Wohnt","Czy pan tu mieszka?","Sie (pan/pani) → zawsze -en."],
+["Du ____ nach Berlin.","fährst","fahrst|fahre|fahrt","Jedziesz do Berlina.","fahren zmienia a na ä w 2. osobie: du fährst."],
+["Er ____ ein Buch.","liest","lest|lese|lesst","On czyta książkę.","lesen zmienia e na ie: er liest."],
+["Ich ____ kein Deutsch.","spreche","sprichst|spricht|sprechen","Nie mówię po niemiecku.","W 1. osobie nie ma zmiany samogłoski: ich spreche."]]},
+
+{n:3,t:"sein i haben",pl:"być i mieć",th:"Dwa najczęstsze czasowniki. Nieregularne, ale krótkie.",
+forms:[["sein — być","ich <b>bin</b> · du <b>bist</b> · er <b>ist</b>","wir/sie/Sie <b>sind</b> · ihr <b>seid</b>"],
+["haben — mieć","ich <b>habe</b> · du <b>hast</b> · er <b>hat</b>","wir/sie/Sie <b>haben</b> · ihr <b>habt</b>"]],
+sig:["bin","bist","ist","sind","seid","habe","hast","hat","habt"],
+when:["<b>sein</b> mówi, kim albo jaki ktoś jest: <b>Ich bin müde.</b>","<b>haben</b> mówi, co ktoś ma: <b>Ich habe Zeit.</b>","Tych dwóch nie da się wyprowadzić z reguły — muszą wejść w pamięć jako całość."],
+warn:"Wiek podajesz przez <b>sein</b>, nie przez „mieć”: <s>Ich habe 30 Jahre</s> → <b>Ich bin 30 Jahre alt.</b>",
+vs:["Ich <b>bin</b> Lehrer.","Ich <b>habe</b> Zeit.","Pierwsze mówi, kim jestem. Drugie — co mam."],
+q:[["Ich ____ müde.","bin","bist|ist|sind","Jestem zmęczony.","ich → bin."],
+["Du ____ sehr nett.","bist","bin|ist|seid","Jesteś bardzo miły.","du → bist."],
+["Er ____ mein Bruder.","ist","bin|bist|sind","On jest moim bratem.","er → ist."],
+["Wir ____ aus Polen.","sind","seid|ist|bin","Jesteśmy z Polski.","wir → sind."],
+["Ihr ____ zu spät.","seid","sind|seit|bist","Jesteście za późno.","ihr → seid (nie mylić z seit = od)."],
+["Ich ____ keine Zeit.","habe","hast|hat|haben","Nie mam czasu.","ich → habe."],
+["Du ____ ein Auto.","hast","habe|hat|habt","Masz samochód.","du → hast."],
+["Sie ____ zwei Kinder.","hat","habe|hast|habt","Ona ma dwoje dzieci.","sie (ona) → hat."],
+["Wir ____ Hunger.","haben","habt|hat|hast","Jesteśmy głodni.","wir → haben. Niemiec mówi dosłownie: mamy głód."],
+["Ich ____ dreißig Jahre alt.","bin","habe|hat|ist","Mam trzydzieści lat.","Wiek to sein, nie haben."]]},
+
+{n:4,t:"Czasownik na drugim miejscu",pl:"szyk zdania",th:"Jedna reguła, która rządzi całym niemieckim zdaniem.",
+forms:[["reguła","Czasownik jest <b>zawsze drugim elementem</b> zdania"],
+["normalnie","Ich <b>gehe</b> heute ins Kino.","1: Ich · 2: gehe"],
+["inny początek","Heute <b>gehe</b> ich ins Kino.","1: Heute · 2: gehe · podmiot ucieka za czasownik"],
+["jeszcze inny","In Berlin <b>wohnt</b> meine Schwester.","tak samo"]],
+sig:["pozycja 2 = czasownik","podmiot ucieka za czasownik"],
+when:["Możesz zacząć zdanie od czego chcesz — od czasu, od miejsca, od podmiotu. Ale czasownik i tak musi wylądować na drugiej pozycji.","„Drugi element” to nie drugie słowo: <b>Am Montag</b> to jeden element."],
+warn:"To najczęstszy polski błąd, bo po polsku kolejność jest dowolna: <s>Heute ich gehe ins Kino</s> → <b>Heute gehe ich ins Kino.</b>",
+vs:["<b>Ich gehe</b> heute ins Kino.","<b>Heute gehe ich</b> ins Kino.","To samo zdanie. Zmienił się początek, więc podmiot musiał przeskoczyć za czasownik."],
+q:[["Które zdanie jest poprawne?","Heute gehe ich ins Kino.","Heute ich gehe ins Kino.|Heute ins Kino ich gehe.|Ich heute gehe ins Kino.","Dziś idę do kina.","Zaczynasz od Heute, więc czasownik musi być drugi, a ich ląduje za nim."],
+["Które zdanie jest poprawne?","Morgen fahre ich nach Berlin.","Morgen ich fahre nach Berlin.|Ich morgen fahre nach Berlin.|Morgen nach Berlin ich fahre.","Jutro jadę do Berlina.","Morgen na pierwszym miejscu → fahre na drugim."],
+["Które zdanie jest poprawne?","Ich arbeite am Montag.","Am Montag ich arbeite.|Ich am Montag arbeite.|Arbeite ich am Montag.","Pracuję w poniedziałek.","Podmiot pierwszy, czasownik drugi."],
+["Które zdanie jest poprawne?","In Berlin wohnt meine Schwester.","In Berlin meine Schwester wohnt.|Meine Schwester in Berlin wohnt.|In Berlin wohnen meine Schwester.","W Berlinie mieszka moja siostra.","In Berlin to jeden element, więc wohnt idzie zaraz po nim."],
+["Które zdanie jest poprawne?","Am Abend sehe ich fern.","Am Abend ich sehe fern.|Ich am Abend sehe fern.|Am Abend fern ich sehe.","Wieczorem oglądam telewizję.","Am Abend = pozycja 1, sehe = pozycja 2."],
+["Które zdanie jest poprawne?","Meine Mutter kocht heute.","Meine Mutter heute kocht.|Heute meine Mutter kocht.|Kocht meine Mutter heute.","Moja mama gotuje dzisiaj.","Meine Mutter to jeden element na pozycji 1."],
+["Które zdanie jest poprawne?","Jetzt trinke ich Kaffee.","Jetzt ich trinke Kaffee.|Jetzt Kaffee ich trinke.|Ich jetzt trinke Kaffee.","Teraz piję kawę.","Jetzt otwiera zdanie → trinke na drugim miejscu."],
+["Które zdanie jest poprawne?","Wir lernen jeden Tag Deutsch.","Wir jeden Tag lernen Deutsch.|Jeden Tag wir lernen Deutsch.|Lernen wir jeden Tag Deutsch.","Uczymy się niemieckiego codziennie.","Podmiot, potem czasownik, potem reszta."],
+["Które zdanie jest poprawne?","Um acht Uhr beginnt der Kurs.","Um acht Uhr der Kurs beginnt.|Der Kurs um acht Uhr beginnt.|Um acht Uhr beginnen der Kurs.","O ósmej zaczyna się kurs.","Um acht Uhr = pozycja 1, beginnt = pozycja 2."],
+["Które zdanie jest poprawne?","Danach gehen wir nach Hause.","Danach wir gehen nach Hause.|Wir danach gehen nach Hause.|Danach nach Hause wir gehen.","Potem idziemy do domu.","Danach otwiera zdanie, więc wir przeskakuje za gehen."]]},
+
+{n:5,t:"Pytania",pl:"jak zapytać",th:"Dwa typy pytań. W obu czasownik jest wcześniej, niż myślisz.",
+forms:[["z pytajnikiem","<b>Wo</b> <b>wohnst</b> <b>du</b>?","słówko + czasownik + kto"],
+["tak / nie","<b>Wohnst</b> <b>du</b> hier?","czasownik na PIERWSZYM miejscu"],
+["odpowiedź","<b>Ja</b> / <b>Nein</b> / <b>Doch</b>","doch = owszem, wbrew przeczeniu"]],
+sig:["wer","was","wo","woher","wohin","wann","warum","wie","wie viel","welch-"],
+when:["Pytanie z pytajnikiem: słówko pytające zajmuje pozycję 1, czasownik zostaje na 2.","Pytanie tak/nie: czasownik wskakuje na sam początek."],
+warn:"W niemieckim nie ma odpowiednika polskiego „czy”. Nie tłumacz go — po prostu przestaw czasownik na początek: <s>Ob du hier wohnst?</s> → <b>Wohnst du hier?</b>",
+vs:["<b>Woher</b> kommst du?","<b>Wohin</b> gehst du?","woher = skąd (pochodzenie), wohin = dokąd (kierunek). Polskie „gdzie” to po niemiecku trzy różne słowa."],
+q:[["____ wohnst du?","Wo","Wohin|Woher|Wann","Gdzie mieszkasz?","wo = gdzie (miejsce, bez ruchu)."],
+["____ kommst du?","Woher","Wo|Wohin|Warum","Skąd pochodzisz?","woher = skąd."],
+["____ gehst du?","Wohin","Wo|Woher|Wann","Dokąd idziesz?","wohin = dokąd."],
+["____ beginnt der Kurs?","Wann","Wo|Wie|Was","Kiedy zaczyna się kurs?","wann = kiedy."],
+["____ heißt du?","Wie","Was|Wer|Wo","Jak się nazywasz?","Po niemiecku pytasz Wie heißt du, dosłownie: jak się nazywasz."],
+["____ ist das?","Was","Wer|Wie|Wo","Co to jest?","was = co."],
+["____ ist das?","Wer","Was|Wie|Wo","Kto to jest?","wer = kto."],
+["____ du hier?","Wohnst","Du wohnst|Ob wohnst|Wohnen","Czy tu mieszkasz?","Pytanie tak/nie: czasownik na pierwszym miejscu."],
+["____ Sie Deutsch?","Sprechen","Sie sprechen|Ob sprechen|Sprecht","Czy mówi pan po niemiecku?","Czasownik pierwszy, potem Sie."],
+["____ kostet das Buch?","Wie viel","Wie viele|Was viel|Wo viel","Ile kosztuje ta książka?","wie viel = ile (o cenie i ilości niepoliczalnej)."]]},
+
+{n:6,t:"nicht i kein",pl:"przeczenie",th:"Dwa słowa na „nie”. Wybór zależy od tego, co przeczysz.",
+forms:[["kein","przed rzeczownikiem","Ich habe <b>kein</b> Geld."],
+["nicht","cała reszta","Ich komme <b>nicht</b>."],
+["odmiana kein","<b>kein</b> Mann · <b>keine</b> Frau · <b>kein</b> Kind · <b>keine</b> Kinder","dokładnie jak ein"],
+["miejsce nicht","zwykle na końcu zdania","Ich verstehe das <b>nicht</b>."]],
+sig:["kein + rzeczownik","nicht + wszystko inne"],
+when:["Przeczysz rzeczownik → <b>kein</b>: <b>Ich habe keine Zeit.</b>","Przeczysz czasownik, przymiotnik albo całe zdanie → <b>nicht</b>: <b>Das ist nicht gut.</b>"],
+warn:"<s>Ich habe nicht Geld</s> → <b>Ich habe kein Geld.</b><br>Ale przy rzeczowniku z rodzajnikiem określonym wraca nicht: <b>Ich kenne den Mann nicht.</b>",
+vs:["Ich habe <b>kein</b> Auto.","Das Auto ist <b>nicht</b> neu.","Pierwsze przeczy rzeczownikowi (nie mam samochodu). Drugie przeczy cesze (nie jest nowy)."],
+q:[["Ich habe ____ Zeit.","keine","nicht|kein|nichts","Nie mam czasu.","Zeit to rzeczownik żeński → keine."],
+["Ich habe ____ Geld.","kein","keine|nicht|keinen","Nie mam pieniędzy.","Geld = das → kein."],
+["Das ist ____ gut.","nicht","kein|keine|nichts","To nie jest dobre.","gut to przymiotnik → nicht."],
+["Er kommt heute ____.","nicht","kein|keine|nichts","On dziś nie przyjdzie.","Przeczysz czasownik → nicht na końcu."],
+["Ich habe ____ Bruder.","keinen","kein|keine|nicht","Nie mam brata.","Bruder = der, a po haben idzie biernik → keinen."],
+["Sie hat ____ Kinder.","keine","kein|keinen|nicht","Ona nie ma dzieci.","Liczba mnoga → keine."],
+["Das Zimmer ist ____ groß.","nicht","kein|keine|nichts","Ten pokój nie jest duży.","groß to przymiotnik → nicht."],
+["Ich verstehe das ____.","nicht","kein|keine|nichts","Nie rozumiem tego.","das jest już określone, więc nicht."],
+["Wir haben ____ Auto.","kein","keine|keinen|nicht","Nie mamy samochodu.","Auto = das → kein."],
+["Ich spreche ____ Deutsch.","kein","nicht|keine|keinen","Nie mówię po niemiecku.","Nazwy języków traktujesz jak rzeczownik → kein Deutsch."]]},
+
+{n:7,t:"Biernik (Akkusativ)",pl:"kogo? co?",th:"Dobra wiadomość: zmienia się tylko rodzaj męski.",
+forms:[["kto? co? (Nominativ)","<b>der</b> · die · das · die"],
+["kogo? co? (Akkusativ)","<b>den</b> · die · das · die","zmienia się TYLKO der → den"],
+["nieokreślony","<b>einen</b> · eine · ein","ein → einen"],
+["moje / twoje","<b>meinen</b> · meine · mein","tak samo jak ein"]],
+sig:["den","einen","meinen","keinen"],
+when:["Biernika używasz po większości czasowników: <b>haben, kaufen, sehen, nehmen, brauchen, suchen</b>.","<b>Ich sehe den Mann.</b> — kogo widzę? den Mann."],
+warn:"Zapamiętaj tylko jedno: <b>der → den</b> i <b>ein → einen</b>. Rodzaj żeński, nijaki i mnoga wyglądają tak samo jak w mianowniku. To najłatwiejszy przypadek w niemieckim.",
+vs:["<b>Der</b> Mann ist alt.","Ich sehe <b>den</b> Mann.","W pierwszym mężczyzna coś robi. W drugim ktoś coś robi jemu — i tylko dlatego der zmienia się w den."],
+q:[["Ich sehe ____ Mann.","den","der|dem|das","Widzę tego mężczyznę.","Mann = der, a sehen wymaga biernika → den."],
+["Ich kaufe ____ Brot.","das","den|dem|der","Kupuję ten chleb.","Brot = das i w bierniku zostaje das."],
+["Er hat ____ Bruder.","einen","ein|eine|einem","On ma brata.","Bruder = der → w bierniku einen."],
+["Wir suchen ____ Wohnung.","eine","einen|ein|einem","Szukamy mieszkania.","Wohnung = die → eine, bez zmiany."],
+["Ich brauche ____ Stuhl.","einen","ein|eine|einem","Potrzebuję krzesła.","Stuhl = der → einen."],
+["Sie nimmt ____ Tasche.","die","den|dem|der","Ona bierze tę torbę.","Tasche = die, w bierniku bez zmiany."],
+["Ich habe ____ Hund.","einen","ein|eine|einem","Mam psa.","Hund = der → einen."],
+["Er kauft ____ Auto.","ein","einen|eine|einem","On kupuje samochód.","Auto = das → ein, bez zmiany."],
+["Ich kenne ____ Lehrer.","den","der|dem|das","Znam tego nauczyciela.","Lehrer = der → den."],
+["Wir besuchen ____ Kinder.","die","den|dem|der","Odwiedzamy dzieci.","Liczba mnoga → die, bez zmiany."]]},
+
+{n:8,t:"Czasowniki rozdzielne",pl:"przedrostek odskakuje",th:"Niemiecka specjalność. Połowa czasownika ląduje na końcu zdania.",
+forms:[["w słowniku","<b>an</b>|rufen","kreska pokazuje, gdzie pęknie"],
+["w zdaniu","Ich <b>rufe</b> dich <b>an</b>.","przedrostek idzie na sam KONIEC"],
+["w pytaniu","<b>Rufst</b> du mich <b>an</b>?","tak samo"],
+["z modalnym","Ich möchte dich <b>anrufen</b>.","tu zostaje w całości"]],
+sig:["an-","auf-","ab-","ein-","aus-","mit-","fern-","vor-","zu-"],
+when:["Gdy czasownik jest odmieniony, przedrostek odskakuje na koniec zdania.","Gdy czasownik NIE jest odmieniony (po modalnym, w bezokoliczniku), przedrostek zostaje przyklejony."],
+warn:"Przedrostek idzie na sam koniec, nawet jeśli zdanie jest długie: <b>Ich rufe dich morgen Abend nach der Arbeit an.</b>",
+vs:["Ich <b>rufe</b> dich <b>an</b>.","Ich möchte dich <b>anrufen</b>.","W pierwszym czasownik jest odmieniony, więc pęka. W drugim jest w bezokoliczniku, więc zostaje w całości."],
+q:[["Ich ____ dich morgen ____.","rufe / an","rufe an / —|an rufe / —|rufean / —","Zadzwonię do ciebie jutro.","rufen odmienione → an odskakuje na koniec."],
+["Der Zug ____ um acht ____.","fährt / ab","abfährt / —|fährt ab / —|ab fährt / —","Pociąg odjeżdża o ósmej.","ab|fahren: fährt zostaje na miejscu 2, ab idzie na koniec."],
+["Wann ____ der Film ____?","fängt / an","anfängt / —|fängt an / —|an fängt / —","Kiedy zaczyna się film?","an|fangen rozdziela się także w pytaniu."],
+["Ich ____ um sieben Uhr ____.","stehe / auf","aufstehe / —|stehe auf / —|auf stehe / —","Wstaję o siódmej.","auf|stehen — auf ląduje na końcu."],
+["Wir ____ dich ____.","holen / ab","abholen / —|holen ab / —|ab holen / —","Odbierzemy cię.","ab|holen."],
+["Ich möchte dich ____.","anrufen","rufe an|an rufen|rufe an dich","Chciałbym do ciebie zadzwonić.","Po möchten czasownik jest w bezokoliczniku, więc zostaje w całości."],
+["Sie ____ jeden Abend ____.","sieht / fern","fernsieht / —|sieht fern / —|fern sieht / —","Ona ogląda telewizję co wieczór.","fern|sehen."],
+["____ du mich heute ____?","Rufst / an","Anrufst / —|Rufst an / —|An rufst / —","Zadzwonisz do mnie dzisiaj?","W pytaniu też się rozdziela."],
+["Wir ____ in Berlin ____.","steigen / ein","einsteigen / —|steigen ein / —|ein steigen / —","Wsiadamy w Berlinie.","ein|steigen."],
+["Ich kann heute nicht ____.","mitkommen","komme mit|mit komme|mitkomme","Nie mogę dziś pójść z wami.","Po kann czasownik jest w bezokoliczniku → mitkommen w całości."]]},
+
+{n:9,t:"Czasowniki modalne",pl:"móc, musieć, chcieć",th:"Modalny na drugim miejscu, drugi czasownik ucieka na koniec.",
+forms:[["ramka","modalny na pozycji 2, czasownik główny na <b>KOŃCU</b> w bezokoliczniku"],
+["przykład","Ich <b>kann</b> gut Deutsch <b>sprechen</b>."],
+["odmiana können","ich <b>kann</b> · du <b>kannst</b> · er <b>kann</b>","1. i 3. osoba są IDENTYCZNE"],
+["dalej","wir <b>können</b> · ihr <b>könnt</b> · sie <b>können</b>"],
+["znaczenia","<b>können</b> móc · <b>müssen</b> musieć · <b>dürfen</b> mieć pozwolenie","<b>wollen</b> chcieć · <b>möchten</b> chciałbym · <b>sollen</b> powinien"]],
+sig:["können","müssen","dürfen","wollen","möchten","sollen"],
+when:["Modalny odmieniasz, a drugi czasownik zostaje w bezokoliczniku i ląduje na końcu zdania.","W sklepie i restauracji mów <b>möchten</b>, nie <b>wollen</b> — wollen brzmi opryskliwie."],
+warn:"W 1. i 3. osobie liczby pojedynczej modalny nie ma żadnej końcówki: <s>ich kanne</s>, <s>er kannt</s> → <b>ich kann, er kann</b>.",
+vs:["Ich <b>muss</b> jetzt <b>gehen</b>.","Ich <b>darf</b> nicht <b>rauchen</b>.","müssen = muszę. dürfen nicht = nie wolno mi. To nie to samo co „nie muszę”."],
+q:[["Ich ____ gut Deutsch sprechen.","kann","kanne|kannst|können","Umiem dobrze mówić po niemiecku.","ich → kann, bez końcówki."],
+["Du ____ jetzt gehen.","musst","muss|müsst|müssen","Musisz teraz iść.","du → musst."],
+["Er ____ hier nicht rauchen.","darf","darfst|dürfen|darft","Jemu nie wolno tu palić.","er → darf."],
+["Wir ____ ins Kino gehen.","wollen","will|willst|wollt","Chcemy iść do kina.","wir → wollen."],
+["Ich ____ einen Kaffee, bitte.","möchte","möchtest|möchten|möchtet","Poproszę kawę.","W kawiarni zawsze möchte, nie will."],
+["Ihr ____ mehr lernen.","sollt","soll|sollst|sollen","Powinniście więcej się uczyć.","ihr → sollt."],
+["Które zdanie jest poprawne?","Ich kann heute nicht kommen.","Ich kann nicht kommen heute.|Ich kann kommen heute nicht.|Ich nicht kann heute kommen.","Nie mogę dziś przyjść.","Modalny na 2. miejscu, kommen na samym końcu."],
+["Które zdanie jest poprawne?","Wir müssen morgen früh aufstehen.","Wir müssen aufstehen morgen früh.|Wir aufstehen müssen morgen früh.|Wir müssen morgen aufstehen früh.","Musimy jutro wcześnie wstać.","Bezokolicznik zamyka zdanie."],
+["Sie ____ das Formular unterschreiben.","müssen","muss|musst|müsst","Musi pan podpisać ten formularz.","Sie (pan) → müssen."],
+["Ich ____ dich morgen anrufen.","will","willst|wollen|wollt","Chcę do ciebie jutro zadzwonić.","ich → will. Po nim anrufen w całości na końcu."]]},
+
+{n:10,t:"Liczba mnoga",pl:"jedna czy wiele",th:"Pięć końcówek, żadnej reguły. Uczysz się jej razem ze słowem.",
+forms:[["-e","der Tisch → die Tisch<b>e</b>"],
+["-en / -n","die Frau → die Frau<b>en</b>","najczęstsza, prawie wszystkie die"],
+["-er","das Kind → die Kind<b>er</b>"],
+["-s","das Auto → die Auto<b>s</b>","słowa obce"],
+["¨ przegłos","der Apfel → die <b>Ä</b>pfel","znak ¨ w słowniku"],
+["bez zmiany","der Lehrer → die Lehrer","tylko rodzajnik się zmienia"]],
+sig:["-e","-en","-er","-s","¨"],
+when:["W liczbie mnogiej rodzajnik to ZAWSZE <b>die</b>, niezależnie od rodzaju.","Rzeczowniki żeńskie prawie zawsze robią <b>-en</b>: die Frau → die Frauen."],
+warn:"Liczby mnogiej nie da się wyliczyć z reguły — trzeba ją zapamiętać razem ze słowem, tak jak rodzajnik. W tej aplikacji jest podana w okienku każdego rzeczownika.",
+vs:["<b>der</b> Tisch","<b>die</b> Tische","Jedyna stała: w liczbie mnogiej zawsze die."],
+q:[["der Tisch → die ____","Tische","Tischen|Tischer|Tischs","stół → stoły","Tisch dodaje -e."],
+["die Frau → die ____","Frauen","Fraue|Frauer|Fraus","kobieta → kobiety","Rzeczowniki żeńskie prawie zawsze -en."],
+["das Kind → die ____","Kinder","Kinde|Kinden|Kinds","dziecko → dzieci","Kind dodaje -er."],
+["das Auto → die ____","Autos","Auten|Autoe|Autoer","samochód → samochody","Słowa obce dodają -s."],
+["der Apfel → die ____","Äpfel","Apfeln|Apfele|Apfels","jabłko → jabłka","Sam przegłos: a zmienia się w ä."],
+["das Haus → die ____","Häuser","Hausen|Hause|Hauser","dom → domy","Przegłos plus -er."],
+["der Lehrer → die ____","Lehrer","Lehreren|Lehrere|Lehrers","nauczyciel → nauczyciele","Bez zmiany, poznajesz po rodzajniku die."],
+["das Zimmer → die ____","Zimmer","Zimmern|Zimmere|Zimmers","pokój → pokoje","Też bez zmiany."],
+["die Wohnung → die ____","Wohnungen","Wohnunge|Wohnungs|Wohnunger","mieszkanie → mieszkania","Końcówka -ung zawsze robi -en."],
+["Jaki rodzajnik ma liczba mnoga?","die","der|das|den","Wszystkie rzeczowniki w liczbie mnogiej.","W liczbie mnogiej zawsze die — to jedyna pewna reguła w tym temacie."]]}
+];
+
+/* ═══ SŁOWNIK ═══ */
+const DICT={}, ALLW=[];
+CH.forEach(c=>c.w.forEach(x=>{
+  const k=x[0].toLowerCase(), o={de:x[0],pl:x[1],pr:x[2],art:x[3]||'',mn:x[4]||'',ch:c.n};
+  if(!DICT[k]) DICT[k]=o;
+  else if(DICT[k].pl.indexOf(x[1])<0) DICT[k].pl+=' / '+x[1];
+  ALLW.push(o);
+}));
+const NOUNS=ALLW.filter(w=>w.art);
+
+/* ═══ KORPUS ═══ */
+const CORP=[];
+CH.forEach(c=>c.s.forEach(p=>CORP.push(p)));
+function buildCorpGram(){ GR.forEach(g=>g.q.forEach(q=>{
+  const f=q[0].indexOf('____')>=0?q[0].replace('____',q[1]):q[1];
+  CORP.push([f,q[3]]);
+})); }
+function sentencesFor(de){
+  const e1=de.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const re=new RegExp('(^|[^A-Za-zÄÖÜäöüß])('+e1+(de.length>=4?'(?:e|en|er|s|n)?':'')+')([^A-Za-zÄÖÜäöüß]|$)','i');
+  const out=[];
+  for(const p of CORP){ if(re.test(p[0])){ out.push([p[0].replace(re,(m,a,b,z)=>a+'\u0001'+b+'\u0002'+z),p[1]]); if(out.length>=10) break; } }
+  return out;
+}
+
+/* ═══ ZAPIS ═══ */
+const KEY='ola_de_a1_v1';
+let S={xp:0,st:{},day:null,streak:0,read:{},snd:1}, saveT=null;
+async function load(){ try{ const r=await window.storage.get(KEY); if(r&&r.value) S=Object.assign(S,JSON.parse(r.value)); }catch(e){} }
+function save(){ clearTimeout(saveT); saveT=setTimeout(async()=>{ try{ await window.storage.set(KEY,JSON.stringify(S)); }catch(e){} },400); }
+function stat(k){ k=String(k).toLowerCase(); return S.st[k]||(S.st[k]={c:0,w:0}); }
+function mastered(k){ return stat(k).c>=3; }
+function touchDay(){
+  const d=new Date(), t=d.toISOString().slice(0,10);
+  if(S.day===t) return;
+  const y=new Date(d.getTime()-864e5).toISOString().slice(0,10);
+  S.streak=(S.day===y)?(S.streak||0)+1:1; S.day=t; save();
+}
+
+/* ═══ DŹWIĘK ═══ */
+let AC=null;
+function blip(f,d){ if(!S.snd) return;
+  try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    f.forEach((x,i)=>{ const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+i*.075;
+      o.type='triangle'; o.frequency.value=x;
+      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.14,t+.012);
+      g.gain.exponentialRampToValueAtTime(.0001,t+d);
+      o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+d+.02); });
+  }catch(e){} }
+const sOk=()=>blip([660,880,1180],.14), sNo=()=>blip([180,120],.22), sLvl=()=>blip([523,659,784,1046],.2);
+let VOICE=null;
+function pickVoice(){ if(!('speechSynthesis' in window)) return;
+  const v=speechSynthesis.getVoices();
+  VOICE=v.find(x=>x.lang==='de-DE')||v.find(x=>x.lang&&x.lang.startsWith('de'))||null; }
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+function speak(t){ if(!t||!('speechSynthesis' in window)) return;
+  try{ speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t); u.lang='de-DE'; u.rate=.82; if(VOICE)u.voice=VOICE;
+    speechSynthesis.speak(u);
+  }catch(e){} }
+
+/* ═══ HUD ═══ */
+const XPL=200;
+function lvl(){ return 1+Math.floor(S.xp/XPL); }
+function hud(){
+  document.getElementById('hLvl').textContent=lvl();
+  document.getElementById('hXp').style.width=((S.xp%XPL)/XPL*100)+'%';
+  document.getElementById('hStreak').textContent=S.streak||0;
+  document.getElementById('hWords').textContent=ALLW.filter(w=>mastered(w.de)).length;
+}
+
+/* ═══ NAWIGACJA ═══ */
+let CUR=null, CURG=null, SHOWPL=true, LEVEL='w', POPW='';
+function go(v){
+  ['Home','Read','Gram','Pron','Quiz','Done'].forEach(x=>document.getElementById('v'+x).classList.add('hide'));
+  document.getElementById('v'+v[0].toUpperCase()+v.slice(1)).classList.remove('hide');
+  closePop(); window.scrollTo(0,0);
+  if(v==='home') renderHome();
+}
+function setLevel(n){ LEVEL=n; renderHome(); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function ac(s){ return s.replace(/[A-ZÄÖÜĄĆĘŁŃÓŚŹŻ]+/g,m=>'<span class="ac">'+m+'</span>'); }
+function art(a){ return a?'<span class="'+a+'">'+a+'</span> ':''; }
+
+/* ═══ EKRAN GŁÓWNY ═══ */
+function ring(p,label){
+  const r=17,c=2*Math.PI*r;
+  return '<div class="ring"><svg width="40" height="40" viewBox="0 0 40 40">'+
+   '<circle cx="20" cy="20" r="'+r+'" fill="none" stroke="#333C4A" stroke-width="4"/>'+
+   '<circle cx="20" cy="20" r="'+r+'" fill="none" stroke="'+(p>=1?'#3FD39B':'#FFA02E')+'" stroke-width="4" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+(c*(1-p))+'"/>'+
+   '</svg><b>'+label+'</b></div>';
+}
+function gramDone(g){ return g.q.filter((q,i)=>mastered('g'+g.n+'_'+i)).length; }
+function renderHome(){
+  hud();
+  document.getElementById('totalW').textContent=ALLW.length;
+  document.getElementById('genN').textContent=NOUNS.length;
+  document.getElementById('fixN').textContent=weakList().length;
+  document.getElementById('pw').textContent=Math.round(ALLW.filter(w=>mastered(w.de)).length/ALLW.length*100)+'%';
+  document.getElementById('pg').textContent=Math.round(GR.reduce((a,g)=>a+gramDone(g),0)/GR.reduce((a,g)=>a+g.q.length,0)*100)+'%';
+  document.getElementById('pp').textContent=Math.round(PRONQ.filter((q,i)=>mastered('pr'+i)).length/PRONQ.length*100)+'%';
+  ['p','w','g'].forEach(t=>document.getElementById('tab'+t).classList.toggle('on',LEVEL===t));
+  const L=document.getElementById('chList');
+  if(LEVEL==='p'){
+    const m=PRONQ.filter((q,i)=>mastered('pr'+i)).length;
+    L.innerHTML='<button class="ch" onclick="openPron()" style="border-color:var(--am)">'+ring(m/PRONQ.length,'📢')+
+      '<div class="ch-t"><b>15 zasad wymowy</b><small>'+m+'/'+PRONQ.length+' słów przeczytanych poprawnie</small></div><div class="go">START</div></button>'+
+      '<div class="foot" style="margin-top:14px;border:0;padding:0">Zrób to jako pierwsze. Zajmie kwadrans, a odblokuje Ci czytanie każdego kolejnego słowa w tej aplikacji.</div>';
+    return;
+  }
+  if(LEVEL==='g'){
+    L.innerHTML='<button class="ch" onclick="startMix()" style="border-color:var(--am)"><div class="ring"><b>🌀</b></div>'+
+      '<div class="ch-t"><b>Mix całej gramatyki</b><small>15 pytań ze wszystkich 10 tematów</small></div><div class="go">GRAJ</div></button>'+
+      GR.map(g=>{ const m=gramDone(g),p=m/g.q.length;
+        return '<button class="ch" onclick="openGram('+g.n+')">'+ring(p,g.n)+
+        '<div class="ch-t"><b>'+g.t+'</b><small>'+m+'/'+g.q.length+' opanowanych'+(p>=1?' · ZALICZONE ✓':'')+'</small></div>'+
+        '<div class="go">'+(m?'DALEJ':'START')+'</div></button>'; }).join('');
+    return;
+  }
+  L.innerHTML=CH.map(c=>{
+    const m=c.w.filter(x=>mastered(x[0])).length,p=m/c.w.length;
+    const g=c.w.filter(x=>x[3]).length;
+    return '<button class="ch" onclick="openChapter('+c.n+')">'+ring(p,c.n)+
+      '<div class="ch-t"><b>'+c.t+'</b><small>'+m+'/'+c.w.length+' opanowanych'+(g?' · '+g+' rzeczowników':'')+(p>=1?' · ✓':'')+'</small></div>'+
+      '<div class="go">'+(S.read[c.n]?'DALEJ':'START')+'</div></button>';
+  }).join('');
+}
+function toggleSnd(){ S.snd=S.snd?0:1; save(); document.getElementById('sndBtn').textContent='🔊 Dźwięki: '+(S.snd?'włączone':'wyłączone'); if(S.snd)sOk(); }
+
+/* ═══ CZYTANIE ═══ */
+function tok(sent,chn){
+  const parts=sent.split(/([A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß]*)/g);
+  let out='';
+  for(let i=0;i<parts.length;i++){
+    if(i%2===0){ out+=esc(parts[i]); continue; }
+    const w1=parts[i], k=w1.toLowerCase();
+    out+= DICT[k] ? '<w'+(DICT[k].ch===chn?'':' class="o"')+' onclick="pop(\''+k.replace(/'/g,"\\'")+'\',this)">'+esc(w1)+'</w>' : esc(w1);
+  }
+  return out;
+}
+function openChapter(n){
+  CUR=n; const c=CH.find(x=>x.n===n); S.read[n]=1; save();
+  document.getElementById('rTitle').textContent=n+'. '+c.t;
+  document.getElementById('rSub').textContent=c.th;
+  document.getElementById('rPaper').innerHTML=c.s.map(p=>
+    '<div class="line"><div class="en"><button class="spk" onclick="speak(this.dataset.t)" data-t="'+p[0].replace(/"/g,'&quot;')+'">🔊</button>'+tok(p[0],n)+'</div>'+
+    '<div class="pl'+(SHOWPL?'':' off')+'">'+esc(p[1])+'</div></div>').join('');
+  document.getElementById('rList').innerHTML=''; go('read');
+}
+function togglePl(){
+  SHOWPL=!SHOWPL;
+  document.querySelectorAll('.pl').forEach(e=>e.classList.toggle('off',!SHOWPL));
+  document.getElementById('tglPl').textContent=SHOWPL?'Ukryj polski':'Pokaż polski';
+}
+function showChWords(){
+  const box=document.getElementById('rList');
+  if(box.innerHTML){ box.innerHTML=''; return; }
+  const c=CH.find(x=>x.n===CUR);
+  box.innerHTML='<table class="tab">'+c.w.map(x=>
+    '<tr><td>'+(mastered(x[0])?'✓ ':'')+art(x[3])+'<b>'+esc(x[0])+'</b>'+(x[4]?' <span style="color:var(--dim)">('+esc(x[4])+')</span>':'')+' — '+esc(x[1])+
+    '</td><td><button class="spk" onclick="speak(this.dataset.t)" data-t="'+esc((x[3]?x[3]+' ':'')+x[0])+'">🔊</button> '+ac(esc(x[2]))+'</td></tr>').join('')+'</table>';
+}
+
+/* ═══ POPUP ═══ */
+function pop(k,el){
+  const d=DICT[k]; if(!d) return;
+  POPW=(d.art?d.art+' ':'')+d.de;
+  document.querySelectorAll('w.on').forEach(e=>e.classList.remove('on'));
+  if(el) el.classList.add('on');
+  document.getElementById('pW1').innerHTML=art(d.art)+esc(d.de);
+  document.getElementById('pW2').textContent=d.pl;
+  document.getElementById('pW3').innerHTML='[ '+ac(esc(d.pr))+' ]'+(mastered(d.de)?'   ✓ opanowane':'');
+  document.getElementById('pW4').innerHTML=d.mn?('mnoga: <span class="die">die</span> '+esc(plural(d))):'';
+  document.getElementById('pSent').classList.add('hide');
+  document.getElementById('pop').classList.add('show');
+  speak(POPW);
+}
+function plural(d){
+  const m=d.mn.trim();
+  if(!m) return '';
+  if(m.indexOf('¨')>=0){
+    const base=d.de.replace(/([aou])(?!.*[aou])/i,(c)=>({a:'ä',o:'ö',u:'ü',A:'Ä',O:'Ö',U:'Ü'})[c]||c);
+    return base+m.replace('¨','').replace(/^-/,'');
+  }
+  if(m[0]==='-') return d.de+m.slice(1);
+  return m;
+}
+function showSent(){
+  const box=document.getElementById('pSent');
+  if(!box.classList.contains('hide')){ box.classList.add('hide'); return; }
+  const bare=POPW.replace(/^(der|die|das)\s+/,'');
+  const list=sentencesFor(bare);
+  box.innerHTML=list.length
+    ? list.map(p=>'<p>'+esc(p[0]).replace(/\u0001/g,'<mark>').replace(/\u0002/g,'</mark>')+'<span>'+esc(p[1])+'</span></p>').join('')
+    : '<p style="color:var(--dim)">To słowo nie pojawia się jeszcze w żadnym zdaniu.</p>';
+  box.classList.remove('hide');
+}
+function closePop(){
+  document.getElementById('pSent').classList.add('hide');
+  document.getElementById('pop').classList.remove('show');
+  document.querySelectorAll('w.on').forEach(e=>e.classList.remove('on'));
+}
+
+/* ═══ KARTY: GRAMATYKA I WYMOWA ═══ */
+function openGram(n){
+  CURG=n; const g=GR.find(x=>x.n===n);
+  document.getElementById('gTitle').textContent=g.t;
+  document.getElementById('gSub').textContent=g.pl+' · '+g.th;
+  document.getElementById('gForms').innerHTML=g.forms.map(f=>
+    '<tr><td>'+f[0]+'</td><td>'+f[1]+(f[2]?'<br><span style="color:#666F7E">'+f[2]+'</span>':'')+'</td></tr>').join('');
+  document.getElementById('gSig').innerHTML=g.sig.map(s=>'<span class="chip">'+esc(s)+'</span>').join('');
+  document.getElementById('gBody').innerHTML=
+    '<div class="box"><h4>Kiedy tego używasz</h4><ul>'+g.when.map(w=>'<li>'+w+'</li>').join('')+'</ul></div>'+
+    '<div class="box stop"><h4>Pułapka</h4>'+g.warn+'</div>'+
+    '<div class="vs"><div>'+g.vs[0]+'</div><div>'+g.vs[1]+'</div><div class="note">'+g.vs[2]+'</div></div>';
+  go('gram');
+}
+function openPron(){
+  document.getElementById('prRules').innerHTML=PRULES.map(r=>
+    '<tr><td>'+esc(r[0])+'</td><td><b>'+esc(r[1])+'</b><br><span style="color:#666F7E">'+esc(r[2])+'</span></td></tr>').join('');
+  document.getElementById('prBody').innerHTML=
+    '<div class="box"><h4>Umlauty</h4><ul><li><b>ä</b> = po prostu „e" (Äpfel = EP-fel)</li>'+
+    '<li><b>ö</b> = ułóż usta jak do „o", powiedz „e"</li>'+
+    '<li><b>ü</b> = ułóż usta jak do „u", powiedz „i"</li></ul></div>'+
+    '<div class="box"><h4>Akcent</h4>Pada zwykle na <b>pierwszą sylabę</b>. Wyjątki: słowa obce (Ho<b>TEL</b>) i czasowniki z przedrostkami be-, ver-, ent-, er-, ge- (ver<b>STE</b>hen). W tej aplikacji akcentowana sylaba jest zawsze podświetlona.</div>'+
+    '<div class="box stop"><h4>Pułapka</h4>Nie czytaj po polsku. <b>z</b> to „c", <b>w</b> to „w", <b>v</b> to „f", a <b>s</b> przed samogłoską to „z". Dlatego <b>Sie</b> czytamy „zi", a nie „si".</div>';
+  go('pron');
+}
+
+/* ═══ QUIZ ═══ */
+let Q=null;
+function weakList(){ return ALLW.filter(w=>{const s=stat(w.de); return s.w>0&&s.c<3;}); }
+function seenList(){ const l=ALLW.filter(w=>{const s=stat(w.de); return s.c+s.w>0;}); return l.length?l:CH[0].w.map(x=>({de:x[0],pl:x[1],pr:x[2],art:x[3]||'',mn:x[4]||'',ch:1})); }
+function startChapter(n){ const c=CH.find(x=>x.n===n);
+  begin(c.w.map(x=>({de:x[0],pl:x[1],pr:x[2],art:x[3]||'',mn:x[4]||'',ch:n})),{mode:'ch',n:10,label:'Rozdział '+n}); }
+function startBlitz(){ begin(seenList(),{mode:'blitz',time:60,label:'Blitz 60s'}); }
+function startFix(){ const l=weakList();
+  if(!l.length){ alert('Nie masz jeszcze błędów do naprawy. Zagraj rozdział — pomyłki wpadną tutaj same.'); return; }
+  begin(l,{mode:'fix',n:Math.min(12,l.length*2),label:'Moje błędy'}); }
+function startGender(){ begin(NOUNS,{mode:'gen',kind:'gender',n:20,label:'der / die / das'}); }
+function startPron(){ begin(PRONQ.map((q,i)=>({id:'pr'+i,de:q[0],ok:q[1],bad:q[2].split('|'),pl:q[3]})),{mode:'pron',kind:'pron',n:12,label:'Wymowa'}); }
+function startGram(n){ const g=GR.find(x=>x.n===n);
+  begin(GQ.filter(x=>x.ch===n),{mode:'gram',kind:'gram',n:10,label:g.t}); }
+function startMix(){ begin(GQ,{mode:'mix',kind:'gram',n:15,label:'Mix gramatyki'}); }
+const GQ=[]; GR.forEach(g=>g.q.forEach((q,i)=>GQ.push({id:'g'+g.n+'_'+i,s:q[0],ok:q[1],bad:q[2].split('|'),pl:q[3],why:q[4],ch:g.n,tag:g.t})));
+
+function begin(pool,o){
+  Q={kind:o.kind||'vocab',pool:pool,mode:o.mode,n:o.n||999,label:o.label,i:0,ok:0,combo:0,max:0,xp:0,miss:[],lock:false,end:0,tick:null,res:{}};
+  touchDay();
+  document.getElementById('qTimer').classList.toggle('hide',o.mode!=='blitz');
+  document.getElementById('qDots').classList.toggle('hide',o.mode==='blitz');
+  if(o.mode==='blitz'){
+    Q.end=Date.now()+o.time*1000;
+    const iv=setInterval(()=>{
+      if(!Q||Q.tick!==iv){ clearInterval(iv); return; }
+      const left=Math.max(0,Math.ceil((Q.end-Date.now())/1000));
+      document.getElementById('qTimer').textContent=left+'s';
+      if(left<=0){ clearInterval(iv); finish(); }
+    },200);
+    Q.tick=iv;
+  }
+  go('quiz'); next();
+}
+function quitQuiz(){ if(Q&&Q.tick)clearInterval(Q.tick); Q=null; save(); go('home'); }
+function keyOf(x){ return x.de||x.id; }
+function pickWord(){
+  const w=[];
+  Q.pool.forEach(x=>{ const s=stat(keyOf(x)); let k=s.c>=3?1:(s.w>s.c?5:(s.c+s.w===0?3:2)); for(let j=0;j<k;j++)w.push(x); });
+  let x=w[Math.random()*w.length|0];
+  if(Q.last&&Q.pool.length>1){ let g=0; while(keyOf(x)===Q.last&&g++<8) x=w[Math.random()*w.length|0]; }
+  Q.last=keyOf(x); return x;
+}
+function distract(t,f){
+  const src=Q.pool.length>=5?Q.pool:ALLW, out=[]; let g=0;
+  while(out.length<3&&g++<400){ const c=src[Math.random()*src.length|0];
+    if(c[f]===t[f]||out.some(o=>o[f]===c[f])) continue; out.push(c); }
+  while(out.length<3){ const c=ALLW[Math.random()*ALLW.length|0]; if(c[f]!==t[f]&&!out.some(o=>o[f]===c[f])) out.push(c); }
+  return out;
+}
+function gapSent(w){
+  const c=CH.find(x=>x.n===w.ch); if(!c) return null;
+  const e1=w.de.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const tries=[new RegExp('(^|[^A-Za-zÄÖÜäöüß])('+e1+')([^A-Za-zÄÖÜäöüß]|$)'),
+               new RegExp('(^|[^A-Za-zÄÖÜäöüß])('+e1+'(?:e|en|er|s|n|t|st)?)([^A-Za-zÄÖÜäöüß]|$)','i')];
+  for(const re of tries){ for(const p of c.s){ if(re.test(p[0])) return [p[0].replace(re,(m,a,b,z)=>a+'______'+z),p[1]]; } }
+  return null;
+}
+function opts(list,cls){
+  document.getElementById('qOpts').className='opts'+(cls||'');
+  document.getElementById('qOpts').innerHTML=list.map(o=>
+    '<button class="opt" onclick="hit(this,'+(o.ok?1:0)+')"><i></i><span>'+o.t+'</span></button>').join('');
+}
+function full(w){ return w.s&&w.s.indexOf('____')>=0?w.s.replace('____',w.ok):w.ok; }
+
+function next(){
+  if(Q.kind==='gram'){ return nextGram(); }
+  if(Q.kind==='pron'){ return nextPron(); }
+  if(Q.mode!=='blitz'&&Q.i>=Q.n){ return finish(); }
+  const w=pickWord();
+  const W=document.getElementById('qWord'),P=document.getElementById('qPron'),L=document.getElementById('qLab');
+  W.className='qword'; P.innerHTML=''; document.getElementById('qHint').innerHTML='';
+  let mode;
+  if(Q.kind==='gender') mode='gender';
+  else{
+    const pool=w.art?['gender','de2pl','pl2de','gap','gender','audio']:['de2pl','pl2de','de2pl','gap','pl2de','audio'];
+    mode=pool[Math.random()*6|0];
+    if(mode==='audio'&&!('speechSynthesis' in window)) mode='de2pl';
+  }
+  let gs=null;
+  if(mode==='gap'){ gs=gapSent(w); if(!gs) mode='de2pl'; }
+  Q.cur={w:w,mode:mode};
+  if(mode==='gender'){
+    L.textContent='który rodzajnik?'; W.textContent=w.de; P.innerHTML='['+ac(esc(w.pr))+'] · '+esc(w.pl);
+    opts(['der','die','das'].map(a=>({t:'<span class="'+a+'">'+a+'</span>',ok:a===w.art})),' g3');
+  } else if(mode==='de2pl'){
+    L.textContent='co to znaczy?'; W.innerHTML=art(w.art)+esc(w.de); P.innerHTML='[ '+ac(esc(w.pr))+' ]';
+    opts([w].concat(distract(w,'pl')).map(o=>({t:esc(o.pl),ok:o.pl===w.pl})).sort(()=>Math.random()-.5));
+  } else if(mode==='pl2de'){
+    L.textContent='jak to po niemiecku?'; W.textContent=w.pl; W.className='qword small';
+    opts([w].concat(distract(w,'de')).map(o=>({t:art(o.art)+esc(o.de),ok:o.de===w.de})).sort(()=>Math.random()-.5));
+  } else if(mode==='audio'){
+    L.textContent='posłuchaj i wybierz';
+    W.innerHTML='<button class="btn y" onclick="speak((Q.cur.w.art?Q.cur.w.art+\' \':\'\')+Q.cur.w.de)" style="font-size:26px;padding:16px 26px">🔊</button>';
+    opts([w].concat(distract(w,'de')).map(o=>({t:art(o.art)+esc(o.de),ok:o.de===w.de})).sort(()=>Math.random()-.5));
+    setTimeout(()=>speak((w.art?w.art+' ':'')+w.de),220);
+  } else {
+    L.textContent='wstaw brakujące słowo'; W.textContent=gs[0]; W.className='qword small'; P.textContent=gs[1];
+    opts([w].concat(distract(w,'de')).map(o=>({t:esc(o.de),ok:o.de===w.de})).sort(()=>Math.random()-.5));
+  }
+  Q.lock=false; dots(); comboUi();
+}
+function nextGram(){
+  if(Q.i>=Q.n) return finish();
+  const it=pickWord(); Q.cur={w:it,mode:'gram'};
+  document.getElementById('qLab').textContent='wybierz poprawną formę';
+  const W=document.getElementById('qWord'); W.className='qword small'; W.textContent=it.s;
+  document.getElementById('qPron').textContent=it.pl;
+  document.getElementById('qHint').innerHTML='';
+  opts([{t:esc(it.ok),ok:1}].concat(it.bad.map(b=>({t:esc(b),ok:0}))).sort(()=>Math.random()-.5));
+  Q.lock=false; dots(); comboUi();
+}
+function nextPron(){
+  if(Q.i>=Q.n) return finish();
+  const it=pickWord(); Q.cur={w:it,mode:'pron'};
+  document.getElementById('qLab').textContent='jak to przeczytasz?';
+  const W=document.getElementById('qWord'); W.className='qword'; W.textContent=it.de;
+  document.getElementById('qPron').textContent=it.pl;
+  document.getElementById('qHint').innerHTML='';
+  opts([{t:ac(esc(it.ok)),ok:1}].concat(it.bad.map(b=>({t:ac(esc(b)),ok:0}))).sort(()=>Math.random()-.5));
+  Q.lock=false; dots(); comboUi();
+  setTimeout(()=>speak(it.de),300);
+}
+function dots(){
+  if(Q.mode==='blitz'){ document.getElementById('qDots').innerHTML=''; return; }
+  let h=''; for(let j=0;j<Q.n;j++) h+='<div class="dot'+(Q.res[j]!==undefined?(Q.res[j]?' ok':' no'):'')+'"></div>';
+  document.getElementById('qDots').innerHTML=h;
+}
+function mult(){ return Math.min(1+Math.floor(Q.combo/3),5); }
+function comboUi(){
+  const c=document.getElementById('qCombo');
+  c.textContent=Q.combo>=2?('x'+mult()+' ⚡'+Q.combo):'';
+  document.getElementById('qStreakBar').style.width=Math.min(Q.combo,12)/12*100+'%';
+}
+function hit(el,ok){
+  if(Q.lock) return; Q.lock=true;
+  const w=Q.cur.w, m=Q.cur.mode, s=stat(keyOf(w)), H=document.getElementById('qHint');
+  document.querySelectorAll('#qOpts .opt').forEach(b=>{ if(b!==el) b.classList.add('dim'); });
+  let info;
+  if(m==='gram') info='<b>'+esc(full(w))+'</b><br><span style="color:var(--am)">'+w.why+'</span>';
+  else if(m==='pron') info='<b>'+esc(w.de)+'</b> = '+ac(esc(w.ok))+' &nbsp;— '+esc(w.pl);
+  else info=art(w.art)+'<b>'+esc(w.de)+'</b> — '+esc(w.pl)+' &nbsp;<span style="font-family:var(--mono)">['+ac(esc(w.pr))+']</span>'+(w.mn?' &nbsp;mn. <span class="die">die</span> '+esc(plural(w)):'');
+  if(ok){
+    s.c++; Q.combo++; Q.max=Math.max(Q.max,Q.combo); Q.ok++;
+    const g=10*mult(); Q.xp+=g; const before=lvl(); S.xp+=g;
+    el.classList.add('hit');
+    const r=el.getBoundingClientRect(), p=document.createElement('div');
+    p.className='xppop'; p.textContent='+'+g; p.style.left=Math.max(10,r.right-64)+'px'; p.style.top=(r.top-6)+'px';
+    document.body.appendChild(p); setTimeout(()=>p.remove(),1000);
+    const cb=document.getElementById('qCombo'); cb.classList.add('pump'); setTimeout(()=>cb.classList.remove('pump'),180);
+    sOk(); if(lvl()>before) setTimeout(sLvl,260);
+    H.innerHTML=info+(mastered(keyOf(w))?' &nbsp;✓ OPANOWANE':'');
+    Q.res[Q.i]=1;
+  } else {
+    s.w++; s.c=Math.max(0,s.c-1); Q.combo=0; Q.miss.push(w);
+    el.classList.add('bad','hit'); sNo();
+    const good = m==='gender'?w.art : (m==='gram'||m==='pron')?w.ok : (m==='de2pl'?w.pl:w.de);
+    document.querySelectorAll('#qOpts .opt').forEach(b=>{
+      const t=b.querySelector('span').textContent.trim();
+      if(t===good||t===good+' '||(m==='pl2de'||m==='audio')&&t.endsWith(good)){ b.classList.remove('dim'); b.classList.add('hit'); }
+    });
+    H.innerHTML=info; Q.res[Q.i]=0;
+  }
+  Q.i++; hud(); dots(); comboUi(); save();
+  if(!ok) speak(m==='gram'?full(w):((w.art?w.art+' ':'')+w.de));
+  setTimeout(()=>{ if(Q) next(); }, ok?640:(m==='gram'?3200:2100));
+}
+function finish(){
+  if(Q.tick) clearInterval(Q.tick);
+  const tot=Q.i||1, pct=Math.round(Q.ok/tot*100);
+  document.getElementById('dLab').textContent=Q.label+' — koniec';
+  document.getElementById('dBig').textContent='+'+Q.xp+' XP';
+  let msg=Q.ok+' / '+tot+' poprawnie ('+pct+'%). Najdłuższa seria: '+Q.max+'.';
+  msg+= pct>=90?' To był popis.' : pct>=70?' Dobra robota — jeszcze runda i to Twoje.' : ' Spokojnie, przy niemieckim to normalne. Powtórz teraz, póki świeże.';
+  document.getElementById('dSub').textContent=msg;
+  const seen={}, u=Q.miss.filter(x=>seen[keyOf(x)]?0:(seen[keyOf(x)]=1));
+  const rows=u.length? u.map(x=> Q.kind==='gram'
+      ? '<tr class="bad"><td><b>'+esc(full(x))+'</b><br><span style="color:var(--dim);font-size:13px">'+x.why+'</span></td><td>'+esc(x.tag)+'</td></tr>'
+      : Q.kind==='pron'
+      ? '<tr class="bad"><td><b>'+esc(x.de)+'</b> — '+esc(x.pl)+'</td><td>'+ac(esc(x.ok))+'</td></tr>'
+      : '<tr class="bad"><td>'+art(x.art)+'<b>'+esc(x.de)+'</b> — '+esc(x.pl)+'</td><td>'+ac(esc(x.pr))+'</td></tr>').join('') : null;
+  document.getElementById('dTab').innerHTML= rows
+    ? '<tr><td colspan="2" style="color:var(--dim);font-size:13px">DO POPRAWY — wrócą w treningu:</td></tr>'+rows
+    : '<tr><td>Zero pomyłek. Nic do poprawy.</td><td>✓</td></tr>';
+  const last=Q; Q=null; window.__last=last; save(); go('done');
+}
+function repeat(){
+  const l=window.__last; if(!l) return go('home');
+  begin(l.pool,{mode:l.mode,kind:l.kind,n:l.mode==='blitz'?999:(l.kind==='gram'?10:(l.kind==='gender'?20:10)),time:60,label:l.label});
+}
+
+/* ═══ START ═══ */
+document.addEventListener('click',e=>{ if(!e.target.closest('.pop')&&!e.target.closest('w')) closePop(); });
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('vQuiz').classList.contains('hide')) return;
+  const n=parseInt(e.key,10);
+  if(n>=1&&n<=4){ const b=document.querySelectorAll('#qOpts .opt')[n-1]; if(b) b.click(); }
+});
+buildCorpGram();
+(async()=>{ await load(); document.getElementById('sndBtn').textContent='🔊 Dźwięki: '+(S.snd?'włączone':'wyłączone'); renderHome(); go('home'); })();
+</script>
+</body>
+</html>
